@@ -1,3 +1,21 @@
 from django.contrib import admin
+from .models import Usuario
+from django.contrib.auth.admin import UserAdmin
 
-# Register your models here.
+@admin.register(Usuario)
+class UsuarioAdmin(UserAdmin):
+    model = Usuario
+    list_display = ('id', 'username', 'email', 'tipo', 'is_active', 'is_staff')
+    list_filter = ('tipo', 'is_staff', 'is_active')
+    fieldsets = (
+        (None, {'fields': ('username', 'email', 'password', 'tipo')}),
+        ('Permissões', {'fields': ('is_staff', 'is_active', 'is_superuser', 'groups', 'user_permissions')}),
+    )
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('username', 'email', 'tipo', 'password1', 'password2', 'is_staff', 'is_active')}
+        ),
+    )
+    search_fields = ('email', 'username')
+    ordering = ('id',)

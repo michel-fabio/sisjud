@@ -25,7 +25,7 @@ function Register() {
     }
 
     try {
-      await api.post("register/", { nome, email, password });
+      await api.post("register/", { nome, email, password }, { headers: { Authorization: "" } });
       toast.current.show({ severity: "success", summary: "Sucesso", detail: "Cadastro realizado com sucesso!", life: 3000 });
 
       setTimeout(() => {

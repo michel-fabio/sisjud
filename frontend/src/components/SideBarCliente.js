@@ -1,9 +1,29 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Menu } from 'primereact/menu';
 import { useNavigate } from 'react-router-dom';
+import api from '../services/api'; // importa o serviço de API
 
 const SidebarCliente = () => {
   const navigate = useNavigate();
+  const [nome, setNome] = useState("Carregando...");
+
+  useEffect(() => {
+    const fetchUsuario = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (token) {
+          api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+          const response = await api.get("usuario-logado/");
+          setNome(response.data.first_name || response.data.username); // usa nome se houver
+        }
+      } catch (error) {
+        console.error("Erro ao buscar dados do usuário:", error);
+        setNome("Cliente");
+      }
+    };
+
+    fetchUsuario();
+  }, []);
 
   const items = [
     { label: 'Início', icon: 'pi pi-home', command: () => navigate('/inicio-cliente') },
@@ -12,9 +32,15 @@ const SidebarCliente = () => {
   ];
 
   const logoutItem = [
-    { label: 'Sair', icon: 'pi pi-sign-out', command: () => navigate('/') },
+    {
+      label: 'Sair',
+      icon: 'pi pi-sign-out',
+      command: () => {
+        localStorage.removeItem("token"); // limpa o token
+        navigate('/');
+      },
+    },
   ];
-
   return (
     <div style={{
       width: '220px',
@@ -27,7 +53,7 @@ const SidebarCliente = () => {
     }}>
       <div style={{ textAlign: 'center', marginBottom: '20px', color: 'white' }}>
         <img src="https://www.w3schools.com/howto/img_avatar.png" alt="Avatar" style={{ width: '60px', borderRadius: '50%' }} />
-        <h3 style={{ marginTop: '10px', fontSize: '16px' }}>Nome do Cliente</h3>
+        <h3 style={{ marginTop: '10px', fontSize: '16px' }}>{nome}</h3>
       </div>
 
       <div style={{ flex: 1, width: '100%' }}>
