@@ -8,7 +8,7 @@ const SideBarAdvogado = () => {
   const items = [
     { label: 'Início', icon: 'pi pi-home', command: () => navigate('/inicio-advogado') },
     { label: 'Atendimentos do Dia', icon: 'pi pi-comments', command: () => navigate('/atendimentos-hoje') },
-    { label: 'Atendimentos Realizados', icon: 'pi pi-check-circle', command: () => navigate('/inicio-advogado') },
+    { label: 'Atendimentos Realizados', icon: 'pi pi-check-circle', command: () => navigate('/atendimentos-realizados') },
   ];
 
   const logoutItem = [

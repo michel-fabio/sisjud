@@ -15,6 +15,7 @@ import AdvogadosAfiliados from "./pages/AdvogadosAfiliados";
 import ListarClientes from "./pages/ListarClientes";
 import InicioAdvogado from "./pages/InicioAdvogado";
 import AtendimentosHoje from "./pages/AtendimentosHoje";
+import AtendimentosRealizados from "./pages/AtendimentosRealizados";
 import PrivateRoute from "./components/PrivateRoute";
 import './App.css';
 
@@ -37,6 +38,7 @@ function AppContent() {
         <Route path="/listar-clientes" element={<ListarClientes />} />
         <Route path="/inicio-advogado" element={<InicioAdvogado />} />
         <Route path="/atendimentos-hoje" element={<AtendimentosHoje />} />
+        <Route path="/atendimentos-realizados" element={<AtendimentosRealizados />} />
 
         <Route element={<PrivateRoute />}>
           <Route path="/dashboard" element={<Dashboard />} />
