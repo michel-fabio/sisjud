@@ -30,8 +30,8 @@ __pycache__/
 *.py[cod]
 
 # Virtual environment
-venv/
-.env
+backend/venv/
+backend/.env
 
 # SQLite database
 backend/db.sqlite3
