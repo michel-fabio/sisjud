@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes} from "react-router-dom";
 import 'primereact/resources/themes/lara-light-indigo/theme.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
@@ -21,8 +21,6 @@ import './App.css';
 
 
 function AppContent() {
-  const location = useLocation();
-  const hideHeaderRoutes = ["/", "/register", "/advogado"]; // Rotas onde o Header NÃO deve aparecer
 
   return (
     <>
