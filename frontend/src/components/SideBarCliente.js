@@ -31,10 +31,10 @@ const SidebarCliente = () => {
       </div>
 
       <div style={{ flex: 1, width: '100%' }}>
-        <Menu model={items} style={{ border: 'none', backgroundColor: '#3f51b5', color: 'white', width: '100%' }} className="custom-menu" />
+        <Menu model={items} style={{ border: 'none', backgroundColor: '#3f51b5', color: 'white', width: '100%' }} className="custom-menu-cliente" />
       </div>
 
-      <Menu model={logoutItem} style={{ border: 'none', backgroundColor: '#3f51b5', color: 'white', width: '100%' }} className="custom-menu" />
+      <Menu model={logoutItem} style={{ border: 'none', backgroundColor: '#3f51b5', color: 'white', width: '100%' }} className="custom-menu-cliente" />
     </div>
   );
 };

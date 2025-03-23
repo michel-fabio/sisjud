@@ -10,6 +10,7 @@ import Dashboard from "./pages/Dashboard";
 import SolicitarAtendimento from "./pages/SolicitarAtendimento";
 import CancelarAtendimento from "./pages/CancelarAtendimento";
 import InicioCliente from "./pages/InicioCliente";
+import InicioAdministrador from "./pages/InicioAdministrador";
 import Processos from "./pages/Processos";
 import Relatorios from "./pages/Relatorios";
 import PrivateRoute from "./components/PrivateRoute";
@@ -29,6 +30,7 @@ function AppContent() {
         <Route path="/inicio-cliente" element={<InicioCliente />} />
         <Route path="/solicitar-atendimento" element={<SolicitarAtendimento />} />
         <Route path="/cancelar-atendimento" element={<CancelarAtendimento />} />
+        <Route path="/inicio-administrador" element={<InicioAdministrador />} />
 
         <Route element={<PrivateRoute />}>
           <Route path="/dashboard" element={<Dashboard />} />

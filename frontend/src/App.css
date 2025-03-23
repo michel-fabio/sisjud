@@ -37,39 +37,64 @@
   }
 }
 
-.p-menuitem-text {
-  color: #fff !important;
+/* Estilização da SideBarCliente */
+
+.custom-menu-cliente {
+  --menu-bg: #3f51b5;
+  --menu-color: #fff;
+  --menu-hover-bg: #fff;
+  --menu-hover-color: #3f51b5;
 }
 
-.p-menuitem-icon {
-  color: #fff !important;
+.custom-menu-cliente .p-menu {
+  background-color: var(--menu-bg) !important;
 }
 
-.p-menu {
-  background-color: #3f51b5 !important;
+.custom-menu-cliente .p-menuitem {
+  background-color: var(--menu-bg) !important;
 }
 
-.custom-menu .p-menuitem {
-  background-color: #3f51b5 !important;
+.custom-menu-cliente .p-menuitem-text,
+.custom-menu-cliente .p-menuitem-icon {
+  color: var(--menu-color) !important;
 }
 
-.custom-menu .p-menuitem-text {
-  color: #fff !important;
+.custom-menu-cliente .p-menuitem:hover {
+  background-color: var(--menu-hover-bg) !important;
 }
 
-.custom-menu .p-menuitem-icon {
-  color: #fff !important;
+.custom-menu-cliente .p-menuitem:hover .p-menuitem-text,
+.custom-menu-cliente .p-menuitem:hover .p-menuitem-icon {
+  color: var(--menu-hover-color) !important;
 }
 
-/* Quando o usuário passa o mouse por cima */
-.custom-menu .p-menuitem:hover {
-  background-color: #ffffff !important; /* Fundo branco */
+/* Estilização da SideBarAdminstrador */
+
+.custom-menu-adm {
+  --menu-bg: #0097b2;
+  --menu-color: #fff;
+  --menu-hover-bg: #fff;
+  --menu-hover-color: #0097b2;
 }
 
-.custom-menu .p-menuitem:hover .p-menuitem-text {
-  color: #3f51b5 !important; /* Texto azul */
+.custom-menu-adm .p-menu {
+  background-color: var(--menu-bg) !important;
 }
 
-.custom-menu .p-menuitem:hover .p-menuitem-icon {
-  color: #3f51b5 !important; /* Ícone azul */
+.custom-menu-adm .p-menuitem {
+  background-color: var(--menu-bg) !important;
+}
+
+.custom-menu-adm .p-menuitem-text,
+.custom-menu-adm .p-menuitem-icon {
+  color: var(--menu-color) !important;
+}
+
+.custom-menu-adm .p-menuitem:hover {
+  background-color: var(--menu-hover-bg) !important;
+}
+
+.custom-menu-adm .p-menuitem:hover .p-menuitem-text,
+.custom-menu-adm .p-menuitem:hover .p-menuitem-icon {
+  color: var(--menu-hover-color) !important;
 }
