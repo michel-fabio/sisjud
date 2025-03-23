@@ -33,6 +33,11 @@ function InicioAdministrador() {
   return (
     <div style={{ display: 'flex' }}>
       <SideBarAdministrador />
+      
+        {/* Ícone no canto superior direito */}
+        <div style={{ position: 'absolute', top: '10px', right: '20px', zIndex: 1 }}>
+            <img src="./logo.png" alt="Ícone do Sistema" style={{ width: '40px', height: '40px' }} />
+        </div>
 
       <div style={{ flex: 1, padding: '2rem' }}>
         <div style={gridContainerStyle}>
