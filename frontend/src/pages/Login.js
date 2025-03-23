@@ -15,29 +15,50 @@ function Login() {
   const toast = useRef(null); // Criando a referência para o Toast
 
   const handleLogin = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await api.post("token/", { email, password });
-      localStorage.setItem("token", response.data.access);
-
-      toast.current.show({
-        severity: "success",
-        summary: "Sucesso",
-        detail: "Login realizado com sucesso!",
-        life: 3000,
-      });
-
-      setTimeout(() => {
-        navigate("/dashboard");
-      }, 2000); // Redireciona após 2 segundos
-    } catch (error) {
-      toast.current.show({
-        severity: "error",
-        summary: "Erro",
-        detail: "Erro ao fazer login. Verifique suas credenciais.",
-        life: 3000,
-      });
-    }
+      e.preventDefault();
+      try {
+        const response = await api.post("token/", {
+          username: email,
+          password,
+        });
+    
+        const token = response.data.access;
+        localStorage.setItem("token", token);
+    
+        // Configura o token no header para a próxima chamada
+        api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    
+        // Buscar os dados do usuário logado
+        const userResponse = await api.get("usuario-logado/");
+        const { tipo } = userResponse.data;
+    
+        toast.current.show({
+          severity: "success",
+          summary: "Sucesso",
+          detail: "Login realizado com sucesso!",
+          life: 3000,
+        });
+    
+        setTimeout(() => {
+          if (tipo === "cliente") {
+            navigate("/inicio-cliente");
+          } else {
+            toast.current.show({
+              severity: "warn",
+              summary: "Acesso Indevido",
+              detail: "Este login é exclusivo para clientes.",
+              life: 4000,
+            });
+          }
+        }, 1000);
+      } catch (error) {
+        toast.current.show({
+          severity: "error",
+          summary: "Erro",
+          detail: "Erro ao fazer login. Verifique suas credenciais.",
+          life: 3000,
+        });
+      }
   };
 
   return (
