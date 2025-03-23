@@ -98,3 +98,34 @@
 .custom-menu-adm .p-menuitem:hover .p-menuitem-icon {
   color: var(--menu-hover-color) !important;
 }
+
+/* Estilização da SideBarAdvogado */
+
+.custom-menu-advogado {
+  --menu-bg: #00bf63;
+  --menu-color: #fff;
+  --menu-hover-bg: #fff;
+  --menu-hover-color: #00bf63;
+}
+
+.custom-menu-advogado .p-menu {
+  background-color: var(--menu-bg) !important;
+}
+
+.custom-menu-advogado .p-menuitem {
+  background-color: var(--menu-bg) !important;
+}
+
+.custom-menu-advogado .p-menuitem-text,
+.custom-menu-advogado .p-menuitem-icon {
+  color: var(--menu-color) !important;
+}
+
+.custom-menu-advogado .p-menuitem:hover {
+  background-color: var(--menu-hover-bg) !important;
+}
+
+.custom-menu-advogado .p-menuitem:hover .p-menuitem-text,
+.custom-menu-advogado .p-menuitem:hover .p-menuitem-icon {
+  color: var(--menu-hover-color) !important;
+}

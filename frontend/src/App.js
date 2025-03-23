@@ -13,8 +13,7 @@ import InicioCliente from "./pages/InicioCliente";
 import InicioAdministrador from "./pages/InicioAdministrador";
 import AdvogadosAfiliados from "./pages/AdvogadosAfiliados";
 import ListarClientes from "./pages/ListarClientes";
-import Processos from "./pages/Processos";
-import Relatorios from "./pages/Relatorios";
+import InicioAdvogado from "./pages/InicioAdvogado";
 import PrivateRoute from "./components/PrivateRoute";
 import './App.css';
 
@@ -35,13 +34,12 @@ function AppContent() {
         <Route path="/inicio-administrador" element={<InicioAdministrador />} />
         <Route path="/advogados-afiliados" element={<AdvogadosAfiliados />} />
         <Route path="/listar-clientes" element={<ListarClientes />} />
+        <Route path="/inicio-advogado" element={<InicioAdvogado />} />
 
         <Route element={<PrivateRoute />}>
           <Route path="/dashboard" element={<Dashboard />} />
-          
-          <Route path="/processos" element={<Processos />} />
-          <Route path="/relatorios" element={<Relatorios />} />     
         </Route>
+
       </Routes>
     </>
   );
