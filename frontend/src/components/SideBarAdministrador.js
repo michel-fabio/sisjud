@@ -8,7 +8,7 @@ const SideBarAdministrador = () => {
   const items = [
     { label: 'Início', icon: 'pi pi-home', command: () => navigate('/inicio-administrador') },
     { label: 'Advogados Afiliados', icon: 'pi pi-briefcase', command: () => navigate('/advogados-afiliados') },
-    { label: 'Clientes', icon: 'pi pi-users', command: () => navigate('/inicio-administrador') },
+    { label: 'Clientes', icon: 'pi pi-users', command: () => navigate('/listar-clientes') },
   ];
 
   const logoutItem = [

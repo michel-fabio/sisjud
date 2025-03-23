@@ -12,6 +12,7 @@ import CancelarAtendimento from "./pages/CancelarAtendimento";
 import InicioCliente from "./pages/InicioCliente";
 import InicioAdministrador from "./pages/InicioAdministrador";
 import AdvogadosAfiliados from "./pages/AdvogadosAfiliados";
+import ListarClientes from "./pages/ListarClientes";
 import Processos from "./pages/Processos";
 import Relatorios from "./pages/Relatorios";
 import PrivateRoute from "./components/PrivateRoute";
@@ -33,6 +34,7 @@ function AppContent() {
         <Route path="/cancelar-atendimento" element={<CancelarAtendimento />} />
         <Route path="/inicio-administrador" element={<InicioAdministrador />} />
         <Route path="/advogados-afiliados" element={<AdvogadosAfiliados />} />
+        <Route path="/listar-clientes" element={<ListarClientes />} />
 
         <Route element={<PrivateRoute />}>
           <Route path="/dashboard" element={<Dashboard />} />
