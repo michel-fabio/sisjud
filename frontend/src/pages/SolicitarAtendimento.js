@@ -103,7 +103,7 @@ const SolicitarAtendimento = () => {
 
       setTimeout(() => {
         navigate("/inicio-cliente");
-      }, 1000 );
+      }, 1000);
     } catch (error) {
       console.error("Erro:", error.response?.data);
       toast.current.show({
@@ -116,25 +116,27 @@ const SolicitarAtendimento = () => {
   };
 
   return (
-    <div style={{ display: 'flex', height: '100vh', overflow: 'hidden', position: 'relative' }}>
+    <div style={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
       <SideBarCliente />
       <Toast ref={toast} />
 
-      <div style={{ flex: 1, padding: '40px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ position: 'absolute', top: '10px', right: '20px' }}>
-          <img src="./logo.png" alt="Ícone do Sistema" style={{ width: '40px', height: '40px' }} />
-        </div>
+      <div style={{ flex: 1, display: 'flex', padding: '40px', alignItems: 'center', justifyContent: 'center' }}>
 
+        
+        {/* Card do formulário */}
         <div style={{
           backgroundColor: '#f4f6f8',
           borderRadius: '8px',
           padding: '30px',
           boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-          width: '50%',
-          textAlign: 'center'
+          width: '100%',
+          maxWidth: '500px',
+          display: 'flex',
+          flexDirection: 'column',
+          minHeight: '480px'
         }}>
-          <h2 style={{ color: '#3f51b5', textAlign: 'left' }}>NOVO AGENDAMENTO</h2>
-          <p style={{ textAlign: 'left' }}>Solicite aqui um novo agendamento.</p>
+          <h2 style={{ color: '#3f51b5' }}>NOVO AGENDAMENTO</h2>
+          <p>Solicite aqui um novo agendamento.</p>
 
           <Dropdown
             value={areaSelecionada}
@@ -153,18 +155,46 @@ const SolicitarAtendimento = () => {
             disabled={!areaSelecionada}
           />
 
-          <Calendar
-            value={data}
-            onChange={(e) => setData(e.value)}
-            placeholder="Selecione a Data"
-            style={{ width: '100%', marginBottom: '20px' }}
-            dateFormat="dd/mm/yy"
-            locale="pt-BR"
-            disabledDays={[0, 6]}
-          />
+          {areaSelecionada && assuntoSelecionado && (
+            <p style={{ textAlign: 'left', marginBottom: '20px' }}>
+              <strong>Data selecionada:</strong> {data ? new Date(data).toLocaleDateString('pt-BR') : 'Nenhuma data selecionada'}
+            </p>
+          )}
 
-          <Button label="Confirmar" className="p-button-primary" onClick={handleSubmit} style={{ width: '100%', backgroundColor: '#3f51b5', border: 'none' }} />
+          <div style={{ marginTop: 'auto' }}>
+            <Button
+              label="Confirmar"
+              className="p-button-primary"
+              onClick={handleSubmit}
+              style={{
+                width: '100%',
+                backgroundColor: '#3f51b5',
+                border: 'none'
+              }}
+            />
+          </div>
         </div>
+
+        {/* Calendário à direita */}
+        {areaSelecionada && assuntoSelecionado && (
+          <div style={{
+            marginLeft: '40px',
+            backgroundColor: '#f4f6f8',
+            padding: '20px',
+            borderRadius: '8px',
+            height: 'fit-content'
+          }}>
+            <Calendar
+              inline
+              value={data}
+              onChange={(e) => setData(e.value)}
+              dateFormat="dd/mm/yy"
+              locale="pt-BR"
+              disabledDays={[0, 6]}
+              minDate={new Date()}
+            />
+          </div>
+        )}
       </div>
     </div>
   );
