@@ -2,10 +2,17 @@ from rest_framework import serializers
 from .models import Atendimento, AreaJuridica, Assunto
 
 class AtendimentoSerializer(serializers.ModelSerializer):
+    area = serializers.CharField(source='area_juridica.nome', read_only=True)
+    assunto = serializers.CharField(source='assunto.titulo', read_only=True)
+    advogado = serializers.CharField(source='advogado.usuario.get_full_name', default='', read_only=True)
+    oab = serializers.CharField(source='advogado.oab', default='', read_only=True)
+    data = serializers.DateTimeField(source='data_atendimento', format="%d/%m/%Y", read_only=True)
+    valor = serializers.DecimalField(source='valor_causa', max_digits=10, decimal_places=2, read_only=True)
+    numero = serializers.CharField(source='numero_atendimento', default='', read_only=True)
+
     class Meta:
         model = Atendimento
-        fields = '__all__'
-        read_only_fields = ['cliente', 'valor_causa', 'status']
+        fields = ['id', 'area', 'assunto', 'advogado', 'oab', 'data', 'valor', 'status', 'numero']
 
 class AreaJuridicaSerializer(serializers.ModelSerializer):
     class Meta:

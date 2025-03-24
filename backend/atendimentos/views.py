@@ -10,6 +10,11 @@ class AtendimentoViewSet(viewsets.ModelViewSet):
     serializer_class = AtendimentoSerializer
     permission_classes = [IsAuthenticated]
 
+    def get_queryset(self):
+        return Atendimento.objects.filter(cliente=self.request.user)\
+            .select_related('area_juridica', 'assunto', 'advogado')\
+            .order_by('-data_atendimento')
+    
     def perform_create(self, serializer):
         user = self.request.user
         data_atendimento = self.request.data.get('data_atendimento')

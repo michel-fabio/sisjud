@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import api from '../services/api'; 
 import SideBarCliente from '../components/SideBarCliente';
 
 const AtendimentoCard = ({ atendimento }) => {
@@ -12,27 +14,39 @@ const AtendimentoCard = ({ atendimento }) => {
       borderLeft: '6px solid #3f51b5'
     }}>
       <h3 style={{ backgroundColor: '#3f51b5', color: 'white', padding: '8px', borderRadius: '4px' }}>
-        Atendimento - {atendimento.id}
+        Atendimento - {atendimento.numero}
       </h3>
       <p><strong>Área:</strong> {atendimento.area}</p>
       <p><strong>Assunto:</strong> {atendimento.assunto}</p>
-      <p><strong>Advogado:</strong> {atendimento.advogado}</p>
-      <p><strong>OAB:</strong> {atendimento.oab}</p>
+      <p><strong>Advogado:</strong> {atendimento.advogado ? atendimento.advogado : "Advogado ainda não foi definido"}</p>
+      <p><strong>OAB:</strong> {atendimento.oab ? atendimento.oab : "Advogado ainda não foi definido"}</p>
       <p><strong>Data:</strong> {atendimento.data}</p>
-      <p><strong>Valor da Causa:</strong> R$ {atendimento.valor.toLocaleString()}</p>
+      <p><strong>Valor da Causa:</strong> R$ {Number(atendimento.valor).toLocaleString()}</p>
       <p><strong>Status:</strong> {atendimento.status}</p>
     </div>
   );
 };
 
 const InicioCliente = () => {
-  const atendimentos = [
-    { id: '00003', area: 'Consumidor', assunto: 'Cobrança indevida', advogado: 'Nome do Advogado', oab: '1234', data: '01/01/2023', valor: 10000, status: 'Aguardando a decisão do Juiz' },
-    { id: '00002', area: 'Trabalhista', assunto: 'Demissão sem aviso prévio', advogado: 'Nome do Advogado', oab: '5678', data: '01/01/2022', valor: 15000, status: 'Aguardando entrega de documentação pendente' },
-    { id: '00001', area: 'Família', assunto: 'Pedido de Alimentos', advogado: 'Nome do Advogado', oab: '1234', data: '01/01/2021', valor: 2000, status: 'Processo protocolado no Tribunal de Justiça' },
-    { id: '00004', area: 'Civil', assunto: 'Danos materiais', advogado: 'Nome do Advogado', oab: '4321', data: '10/02/2024', valor: 8000, status: 'Em andamento' },
-    { id: '00005', area: 'Penal', assunto: 'Defesa em processo criminal', advogado: 'Nome do Advogado', oab: '8765', data: '15/03/2024', valor: 50000, status: 'Aguardando audiência' }
-  ];
+  const [atendimentos, setAtendimentos] = useState([]);
+
+  useEffect(() => {
+    const fetchAtendimentos = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await api.get('atendimentos/', {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        setAtendimentos(response.data);
+      } catch (error) {
+        console.error('Erro ao carregar atendimentos:', error);
+      }
+    };
+  
+    fetchAtendimentos();
+  }, []);
 
   return (
     <div style={{ display: 'flex', height: '100vh', overflow: 'hidden', position: 'relative' }}>
@@ -53,7 +67,7 @@ const InicioCliente = () => {
           maxHeight: 'calc(100vh - 60px)'
         }}>
           {atendimentos.map(atendimento => (
-            <AtendimentoCard key={atendimento.id} atendimento={atendimento} />
+            <AtendimentoCard key={atendimento.numero} atendimento={atendimento} />
           ))}
         </div>
       </div>
