@@ -18,6 +18,16 @@ class AtendimentoSerializer(serializers.ModelSerializer):
             'area', 'assunto_nome', 'advogado', 'oab', 'data', 'valor', 'status', 'numero'
         ]
 
+class AtendimentoPendenteSerializer(serializers.ModelSerializer):
+    label = serializers.SerializerMethodField()
+    value = serializers.IntegerField(source='id')
+
+    class Meta:
+        model = Atendimento
+        fields = ['label', 'value']
+
+    def get_label(self, obj):
+        return f"{obj.numero_atendimento} - {obj.area_juridica.nome}"
 
 class AreaJuridicaSerializer(serializers.ModelSerializer):
     class Meta:

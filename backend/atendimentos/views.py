@@ -1,8 +1,11 @@
 from django.shortcuts import render
 from rest_framework import viewsets
+from rest_framework.decorators import action
+from rest_framework.response import Response
 from .models import Atendimento, AreaJuridica, Assunto
-from .serializers import AtendimentoSerializer, AreaJuridicaSerializer, AssuntoSerializer
+from .serializers import AtendimentoSerializer, AreaJuridicaSerializer, AssuntoSerializer, AtendimentoPendenteSerializer
 from rest_framework.permissions import IsAuthenticated
+from rest_framework import status as drf_status
 from datetime import datetime
 
 class AtendimentoViewSet(viewsets.ModelViewSet):
@@ -42,6 +45,39 @@ class AtendimentoViewSet(viewsets.ModelViewSet):
             valor_causa=0.00,
             numero_atendimento=numero_gerado
         )
+    
+    @action(detail=False, methods=['get'], url_path='pendentes')
+    def pendentes(self, request):
+        pendentes = Atendimento.objects.filter(
+            cliente=request.user,
+            status='pendente'
+        ).select_related('area_juridica')
+
+        serializer = AtendimentoPendenteSerializer(pendentes, many=True)
+        return Response(serializer.data)
+    
+    @action(detail=True, methods=['post'], url_path='cancelar')
+    def cancelar_atendimento(self, request, pk=None):
+        try:
+            atendimento = self.get_object()
+
+            if atendimento.cliente != request.user:
+                return Response({'erro': 'Você não tem permissão para cancelar este atendimento.'}, status=403)
+
+            if atendimento.status != 'pendente':
+                return Response({'erro': 'Somente atendimentos com status pendente podem ser cancelados.'}, status=400)
+
+            motivo = request.data.get('motivo')
+            observacoes = request.data.get('observacoes', '')
+
+            atendimento.status = 'cancelado'
+            atendimento.anotacoes = f"Cancelado pelo cliente. Motivo: {motivo}\nObservações: {observacoes}"
+            atendimento.save()
+
+            return Response({'mensagem': 'Atendimento cancelado com sucesso.'}, status=drf_status.HTTP_200_OK)
+
+        except Atendimento.DoesNotExist:
+            return Response({'erro': 'Atendimento não encontrado.'}, status=404)
 
 class AreaJuridicaViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = AreaJuridica.objects.all()
