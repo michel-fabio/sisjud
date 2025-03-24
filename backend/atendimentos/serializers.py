@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Atendimento, AreaJuridica, Assunto
+from .models import Atendimento, AreaJuridica, Assunto, MotivoCancelamento
 
 class AtendimentoSerializer(serializers.ModelSerializer):
     area = serializers.CharField(source='area_juridica.nome', read_only=True)
@@ -38,3 +38,8 @@ class AssuntoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Assunto
         fields = ['id', 'titulo', 'area']
+
+class MotivoCancelamentoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MotivoCancelamento
+        fields = ['id', 'descricao']

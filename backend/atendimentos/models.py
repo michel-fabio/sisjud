@@ -37,3 +37,9 @@ class Atendimento(models.Model):
 
     def __str__(self):
         return f"Atendimento {self.id} - {self.area_juridica}"
+    
+class MotivoCancelamento(models.Model):
+    descricao = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.descricao

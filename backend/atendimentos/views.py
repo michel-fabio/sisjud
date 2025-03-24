@@ -2,8 +2,9 @@ from django.shortcuts import render
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from .models import Atendimento, AreaJuridica, Assunto
-from .serializers import AtendimentoSerializer, AreaJuridicaSerializer, AssuntoSerializer, AtendimentoPendenteSerializer
+from rest_framework.views import APIView
+from .models import Atendimento, AreaJuridica, Assunto, MotivoCancelamento
+from .serializers import AtendimentoSerializer, AreaJuridicaSerializer, AssuntoSerializer, AtendimentoPendenteSerializer, MotivoCancelamentoSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status as drf_status
 from datetime import datetime
@@ -93,3 +94,9 @@ class AssuntoViewSet(viewsets.ReadOnlyModelViewSet):
         if area_id:
             queryset = queryset.filter(area_id=area_id)
         return queryset
+    
+class MotivosCancelamentoView(APIView):
+    def get(self, request):
+        motivos = MotivoCancelamento.objects.all()
+        serializer = MotivoCancelamentoSerializer(motivos, many=True)
+        return Response(serializer.data)

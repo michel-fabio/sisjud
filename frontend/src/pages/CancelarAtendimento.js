@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { Dropdown } from 'primereact/dropdown';
 import { Button } from 'primereact/button';
-import { Dialog } from 'primereact/dialog';
+import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 import SideBarCliente from '../components/SideBarCliente';
 import api from '../services/api';
@@ -10,19 +10,10 @@ import api from '../services/api';
 const CancelarAtendimento = () => {
     const [atendimentoSelecionado, setAtendimentoSelecionado] = useState(null);
     const [atendimentos, setAtendimentos] = useState([]);
+    const [motivos, setMotivos] = useState([]);
     const [motivo, setMotivo] = useState(null);
     const [observacoes, setObservacoes] = useState('');
-    const [feedbackVisible, setFeedbackVisible] = useState(false);
-    const [feedbackSucesso, setFeedbackSucesso] = useState(true);
-    const [feedbackMensagem, setFeedbackMensagem] = useState('');
     const navigate = useNavigate();
-
-    const motivos = [
-        { label: 'Desistência do cliente', value: 'Desistência do cliente' },
-        { label: 'Conflito de horários', value: 'Conflito de horários' },
-        { label: 'Erro no agendamento', value: 'Erro no agendamento' },
-        { label: 'Outro', value: 'Outro' }
-    ];
 
     useEffect(() => {
         const fetchAtendimentos = async () => {
@@ -36,14 +27,31 @@ const CancelarAtendimento = () => {
             }
         };
 
+        const fetchMotivos = async () => {
+            try {
+                const response = await api.get('motivos-cancelamento/');
+                const options = response.data.map(motivo => ({
+                    label: motivo.descricao,
+                    value: motivo.descricao
+                }));
+                setMotivos(options);
+            } catch (err) {
+                console.error("Erro ao carregar motivos de cancelamento", err);
+            }
+        };
+
         fetchAtendimentos();
+        fetchMotivos();
     }, []);
 
     const handleCancelar = async () => {
         if (!atendimentoSelecionado || !motivo) {
-            setFeedbackSucesso(false);
-            setFeedbackMensagem("Selecione um atendimento e um motivo para continuar.");
-            setFeedbackVisible(true);
+            Swal.fire({
+                icon: 'warning',
+                title: 'Atenção',
+                text: 'Selecione um atendimento e um motivo para continuar.',
+                confirmButtonColor: '#3f51b5'
+            });
             return;
         }
 
@@ -56,20 +64,23 @@ const CancelarAtendimento = () => {
                 observacoes
             });
 
-            setFeedbackSucesso(true);
-            setFeedbackMensagem("Atendimento cancelado com sucesso!");
-            setFeedbackVisible(true);
+            await Swal.fire({
+                icon: 'success',
+                title: 'Sucesso',
+                text: 'Atendimento cancelado com sucesso!',
+                confirmButtonColor: '#3f51b5'
+            });
 
-            setTimeout(() => {
-                setFeedbackVisible(false);
-                navigate('/inicio-cliente');
-            }, 2000);
+            navigate('/inicio-cliente');
 
         } catch (error) {
-            setFeedbackSucesso(false);
             const erroMsg = error.response?.data?.erro || "Erro ao cancelar atendimento. Tente novamente.";
-            setFeedbackMensagem(erroMsg);
-            setFeedbackVisible(true);
+            Swal.fire({
+                icon: 'error',
+                title: 'Erro',
+                text: erroMsg,
+                confirmButtonColor: '#3f51b5'
+            });
         }
     };
 
@@ -125,33 +136,6 @@ const CancelarAtendimento = () => {
                     />
                 </div>
             </div>
-
-            <Dialog
-                visible={feedbackVisible}
-                onHide={() => setFeedbackVisible(false)}
-                header={feedbackSucesso ? "Sucesso" : "Erro"}
-                style={{ width: '400px', textAlign: 'center' }}
-                modal
-                closable={false}
-                footer={
-                    <Button
-                        label="Ok"
-                        onClick={() => {
-                            setFeedbackVisible(false);
-                            if (feedbackSucesso) navigate('/inicio-cliente');
-                        }}
-                        className={`p-button-${feedbackSucesso ? 'success' : 'danger'}`}
-                    />
-                }
-            >
-                <div style={{ textAlign: 'center' }}>
-                    <i
-                        className={`pi ${feedbackSucesso ? 'pi-check-circle' : 'pi-times-circle'}`}
-                        style={{ fontSize: '3rem', color: feedbackSucesso ? 'green' : 'red' }}
-                    />
-                    <p style={{ marginTop: '20px' }}>{feedbackMensagem}</p>
-                </div>
-            </Dialog>
         </div>
     );
 };

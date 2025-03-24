@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import AreaJuridica, Assunto, Atendimento
+from .models import AreaJuridica, Assunto, Atendimento, MotivoCancelamento
 
 @admin.register(AreaJuridica)
 class AreaJuridicaAdmin(admin.ModelAdmin):
@@ -14,3 +14,5 @@ class AtendimentoAdmin(admin.ModelAdmin):
     list_display = ('id', 'cliente', 'area_juridica', 'assunto', 'data_atendimento', 'status', 'numero_processo', 'numero_atendimento')
     list_filter = ('status', 'area_juridica')
     search_fields = ('cliente__username', 'assunto__titulo', 'area_juridica__nome', 'numero_processo', 'numero_atendimento')
+
+admin.site.register(MotivoCancelamento)
