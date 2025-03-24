@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Calendar } from 'primereact/calendar';
 import { Dropdown } from 'primereact/dropdown';
 import { Button } from 'primereact/button';
 import SideBarCliente from '../components/SideBarCliente';
-import { Toast } from "primereact/toast";
+import Swal from 'sweetalert2';
 import api from "../services/api";
 import { addLocale } from 'primereact/api';
 import { useNavigate } from 'react-router-dom';
@@ -25,7 +25,6 @@ const SolicitarAtendimento = () => {
   const [areaSelecionada, setAreaSelecionada] = useState(null);
   const [assuntoSelecionado, setAssuntoSelecionado] = useState(null);
   const [data, setData] = useState(null);
-  const toast = useRef(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -71,46 +70,45 @@ const SolicitarAtendimento = () => {
 
   const handleSubmit = async () => {
     if (!areaSelecionada || !assuntoSelecionado || !data) {
-      toast.current.show({
-        severity: "warn",
-        summary: "Campos obrigatórios",
-        detail: "Preencha todos os campos",
-        life: 3000
+      Swal.fire({
+        icon: 'warning',
+        title: 'Campos obrigatórios',
+        text: 'Preencha todos os campos para continuar.',
+        confirmButtonColor: '#3f51b5'
       });
       return;
     }
-
+  
     try {
       const token = localStorage.getItem("token");
       api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-
+  
       await api.post("atendimentos/", {
         area_juridica: areaSelecionada,
         assunto: assuntoSelecionado,
         data_atendimento: data.toISOString(),
       });
-
-      toast.current.show({
-        severity: "success",
-        summary: "Agendado",
-        detail: "Atendimento marcado com sucesso!",
-        life: 2000
+  
+      await Swal.fire({
+        icon: 'success',
+        title: 'Agendamento realizado',
+        text: 'Atendimento marcado com sucesso!',
+        confirmButtonColor: '#3f51b5'
       });
-
+  
       setAreaSelecionada(null);
       setAssuntoSelecionado(null);
       setData(null);
-
-      setTimeout(() => {
-        navigate("/inicio-cliente");
-      }, 1000);
+  
+      navigate("/inicio-cliente");
+  
     } catch (error) {
       console.error("Erro:", error.response?.data);
-      toast.current.show({
-        severity: "error",
-        summary: "Erro",
-        detail: "Erro ao agendar atendimento.",
-        life: 3000
+      Swal.fire({
+        icon: 'error',
+        title: 'Erro ao agendar',
+        text: 'Ocorreu um erro ao tentar agendar o atendimento.',
+        confirmButtonColor: '#3f51b5'
       });
     }
   };
@@ -118,7 +116,6 @@ const SolicitarAtendimento = () => {
   return (
     <div style={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
       <SideBarCliente />
-      <Toast ref={toast} />
 
       <div style={{ flex: 1, display: 'flex', padding: '40px', alignItems: 'center', justifyContent: 'center' }}>
 
