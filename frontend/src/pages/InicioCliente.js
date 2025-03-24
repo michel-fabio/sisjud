@@ -17,7 +17,7 @@ const AtendimentoCard = ({ atendimento }) => {
         Atendimento - {atendimento.numero}
       </h3>
       <p><strong>Área:</strong> {atendimento.area}</p>
-      <p><strong>Assunto:</strong> {atendimento.assunto}</p>
+      <p><strong>Assunto:</strong> {atendimento.assunto_nome}</p>
       <p><strong>Advogado:</strong> {atendimento.advogado ? atendimento.advogado : "Advogado ainda não foi definido"}</p>
       <p><strong>OAB:</strong> {atendimento.oab ? atendimento.oab : "Advogado ainda não foi definido"}</p>
       <p><strong>Data:</strong> {atendimento.data}</p>
