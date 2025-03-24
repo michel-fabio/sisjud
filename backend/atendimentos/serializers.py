@@ -3,7 +3,7 @@ from .models import Atendimento, AreaJuridica, Assunto
 
 class AtendimentoSerializer(serializers.ModelSerializer):
     area = serializers.CharField(source='area_juridica.nome', read_only=True)
-    assunto = serializers.CharField(source='assunto.titulo', read_only=True)
+    assunto_nome = serializers.CharField(source='assunto.titulo', read_only=True)
     advogado = serializers.CharField(source='advogado.usuario.get_full_name', default='', read_only=True)
     oab = serializers.CharField(source='advogado.oab', default='', read_only=True)
     data = serializers.DateTimeField(source='data_atendimento', format="%d/%m/%Y", read_only=True)
@@ -12,7 +12,12 @@ class AtendimentoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Atendimento
-        fields = ['id', 'area', 'assunto', 'advogado', 'oab', 'data', 'valor', 'status', 'numero']
+        fields = [
+            'id',
+            'area_juridica', 'assunto', 'data_atendimento',  # campos de entrada (write)
+            'area', 'assunto_nome', 'advogado', 'oab', 'data', 'valor', 'status', 'numero'
+        ]
+
 
 class AreaJuridicaSerializer(serializers.ModelSerializer):
     class Meta:
