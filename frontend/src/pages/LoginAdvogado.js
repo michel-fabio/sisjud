@@ -15,19 +15,40 @@ function LoginAdvogado() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await api.post("token/advogado/", { email, password });
-      localStorage.setItem("token", response.data.access);
+      const response = await api.post("token/", {
+        username: email,
+        password,
+      });
 
+      const token = response.data.access;
+      localStorage.setItem("token", token);
+      api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+  
+      const userResponse = await api.get("usuario-logado/");
+      const { tipo } = userResponse.data;
+  
       toast.current.show({
         severity: "success",
         summary: "Sucesso",
         detail: "Login realizado com sucesso!",
         life: 3000,
       });
-
+  
       setTimeout(() => {
-        navigate("/dashboard-advogado");
-      }, 2000);
+        if (tipo === "admin") {
+          navigate("/inicio-administrador");
+        } else if (tipo === "advogado") {
+          navigate("/inicio-advogado");
+        } else {
+          toast.current.show({
+            severity: "warn",
+            summary: "Acesso não autorizado",
+            detail: "Seu tipo de usuário não tem acesso por esta tela.",
+            life: 3000,
+          });
+        }
+      }, 1000);
+  
     } catch (error) {
       toast.current.show({
         severity: "error",
