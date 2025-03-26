@@ -27,17 +27,22 @@ function LoginAdvogado() {
       const userResponse = await api.get("usuario-logado/");
       const { tipo } = userResponse.data;
   
-      toast.current.show({
-        severity: "success",
-        summary: "Sucesso",
-        detail: "Login realizado com sucesso!",
-        life: 3000,
-      });
-  
       setTimeout(() => {
         if (tipo === "admin") {
+          toast.current.show({
+            severity: "success",
+            summary: "Sucesso",
+            detail: "Login realizado com sucesso!",
+            life: 1500,
+          });
           navigate("/inicio-administrador");
         } else if (tipo === "advogado") {
+          toast.current.show({
+            severity: "success",
+            summary: "Sucesso",
+            detail: "Login realizado com sucesso!",
+            life: 1500,
+          });
           navigate("/inicio-advogado");
         } else {
           toast.current.show({

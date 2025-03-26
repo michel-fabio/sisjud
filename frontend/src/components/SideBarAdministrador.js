@@ -12,7 +12,14 @@ const SideBarAdministrador = () => {
   ];
 
   const logoutItem = [
-    { label: 'Sair', icon: 'pi pi-sign-out', command: () => navigate('/') },
+    {
+      label: 'Sair',
+      icon: 'pi pi-sign-out',
+      command: () => {
+        localStorage.removeItem("token"); // limpa o token
+        navigate('/advogado');
+      },
+    },
   ];
 
   return (
