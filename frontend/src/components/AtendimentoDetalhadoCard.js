@@ -46,12 +46,12 @@ const AtendimentoDetalhadoCard = ({ atendimento, onFinalizar }) => {
             borderRadius: "8px",
             boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
             padding: "30px",
-            marginBottom: "30px",
+            marginBottom: "0px",
             borderLeft: "6px solid #00bf63",
             width: "90%",
             maxWidth: "1200px",
-            minHeight: "85vh",
-            maxHeight: "85vh",
+            minHeight: "84vh",
+            maxHeight: "84vh",
             margin: "40px auto"
         }}
     >

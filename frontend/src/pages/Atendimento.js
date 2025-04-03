@@ -37,7 +37,6 @@ function Atendimento() {
     <div style={{ display: 'flex' }}>
       <SideBarAdvogado />
       <div style={{ flex: 1, padding: '2rem' }}>
-        <h2 style={{ marginBottom: '2rem' }}>Detalhes do Atendimento</h2>
 
         {atendimento ? (
           <AtendimentoDetalhadoCard
