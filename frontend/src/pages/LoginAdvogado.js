@@ -26,6 +26,7 @@ function LoginAdvogado() {
   
       const userResponse = await api.get("usuario-logado/");
       const { tipo } = userResponse.data;
+      localStorage.setItem("nome_usuario", userResponse.data.first_name || userResponse.data.username);
   
       setTimeout(() => {
         if (tipo === "admin") {

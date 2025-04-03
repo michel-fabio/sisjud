@@ -24,6 +24,7 @@ function Login() {
     
         const token = response.data.access;
         localStorage.setItem("token", token);
+        localStorage.setItem("nome_usuario", response.data.first_name || response.data.username);
     
         // Configura o token no header para a próxima chamada
         api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
@@ -31,6 +32,7 @@ function Login() {
         // Buscar os dados do usuário logado
         const userResponse = await api.get("usuario-logado/");
         const { tipo } = userResponse.data;
+        localStorage.setItem("nome_usuario", userResponse.data.first_name || userResponse.data.username);
     
         toast.current.show({
           severity: "success",

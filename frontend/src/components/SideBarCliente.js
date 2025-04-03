@@ -1,29 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Menu } from 'primereact/menu';
 import { useNavigate } from 'react-router-dom';
-import api from '../services/api'; // importa o serviço de API
 
 const SidebarCliente = () => {
   const navigate = useNavigate();
-  const [nome, setNome] = useState("Carregando...");
-
-  useEffect(() => {
-    const fetchUsuario = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        if (token) {
-          api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-          const response = await api.get("usuario-logado/");
-          setNome(response.data.first_name || response.data.username); // usa nome se houver
-        }
-      } catch (error) {
-        console.error("Erro ao buscar dados do usuário:", error);
-        setNome("Cliente");
-      }
-    };
-
-    fetchUsuario();
-  }, []);
+  const nome = localStorage.getItem("nome_usuario") || "Usuário";
 
   const items = [
     { label: 'Início', icon: 'pi pi-home', command: () => navigate('/inicio-cliente') },
@@ -36,7 +17,8 @@ const SidebarCliente = () => {
       label: 'Sair',
       icon: 'pi pi-sign-out',
       command: () => {
-        localStorage.removeItem("token"); // limpa o token
+        localStorage.removeItem("token");
+        localStorage.removeItem("nome_usuario");
         navigate('/');
       },
     },
