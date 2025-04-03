@@ -8,6 +8,7 @@ from .serializers import AtendimentoSerializer, AreaJuridicaSerializer, AssuntoS
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status as drf_status
 from datetime import datetime
+from django.utils.timezone import now
 
 class AtendimentoViewSet(viewsets.ModelViewSet):
     queryset = Atendimento.objects.all()
@@ -79,6 +80,32 @@ class AtendimentoViewSet(viewsets.ModelViewSet):
 
         except Atendimento.DoesNotExist:
             return Response({'erro': 'Atendimento não encontrado.'}, status=404)
+    
+    @action(detail=False, methods=['get'], url_path='hoje-advogado')
+    def atendimentos_hoje_advogado(self, request):
+        if not hasattr(request.user, 'advogado'):
+            return Response({'erro': 'Usuário não é um advogado.'}, status=403)
+
+        hoje = now().date()
+        advogado = request.user.advogado
+        areas = [a.strip() for a in advogado.areas_atuacao.split(',')]
+
+        atendimentos = Atendimento.objects.filter(
+            advogado__isnull=True,
+            data_atendimento__date=hoje,
+            area_juridica__nome__in=areas
+        ).select_related('cliente', 'area_juridica', 'assunto')
+
+        dados = [
+            {
+                'numero': atendimento.numero_atendimento,
+                'area': atendimento.area_juridica.nome,
+                'assunto': atendimento.assunto.titulo,
+                'cliente': atendimento.cliente.first_name
+            }
+            for atendimento in atendimentos
+        ]
+        return Response(dados)
 
 class AreaJuridicaViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = AreaJuridica.objects.all()

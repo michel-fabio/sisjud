@@ -1,3 +1,7 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import Advogado
+
+@admin.register(Advogado)
+class AdvogadoAdmin(admin.ModelAdmin):
+    list_display = ('usuario', 'areas_atuacao')
