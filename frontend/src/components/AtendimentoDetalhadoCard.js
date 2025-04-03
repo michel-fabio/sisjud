@@ -8,10 +8,11 @@ import { InputMask } from 'primereact/inputmask';
 import { InputNumber } from 'primereact/inputnumber';
 
 
-const AtendimentoDetalhadoCard = ({ atendimento, onFinalizar }) => {
+const AtendimentoDetalhadoCard = ({ atendimento, onFinalizar, opcoesStatus}) => {
     console.log(atendimento)
     const [mostrarModal, setMostrarModal] = useState(false);
     const [novoStatus, setNovoStatus] = useState(atendimento.status_display);
+    const [statusAtual, setStatusAtual] = useState(atendimento.status_display);
     const toast = useRef(null);
     const [numeroProcesso, setNumeroProcesso] = useState(atendimento.numero_processo);
     const [anotacoes, setAnotacoes] = useState(atendimento.anotacoes || "");
@@ -28,15 +29,15 @@ const AtendimentoDetalhadoCard = ({ atendimento, onFinalizar }) => {
         return isNaN(valorNumerico) ? null : valorNumerico;
         });
 
-    const opcoesStatus = [
-        { label: 'Aguardando entrada do protocolo no Tribunal de Justiça', value: 'aguardando' },
-        { label: 'Protocolo realizado', value: 'protocolo_realizado' },
-        { label: 'Encerrado', value: 'encerrado' },
-    ];
-
     const confirmarStatus = () => {
-    toast.current.show({ severity: 'success', summary: 'Status atualizado!', life: 2000 });
-    setMostrarModal(false);
+        toast.current.show({ severity: 'success', summary: 'Status atualizado!', life: 2000 });
+        setStatusAtual(novoStatus);
+        setMostrarModal(false);
+    };
+
+    const getStatusLabel = (value) => {
+        const status = opcoesStatus.find(op => op.value === value);
+        return status ? status.label : value;
     };
 
   return (
@@ -82,8 +83,9 @@ const AtendimentoDetalhadoCard = ({ atendimento, onFinalizar }) => {
                 <p style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <strong>Status:</strong>
                     <span style={{ backgroundColor: '#e0e0e0', padding: '4px 8px', borderRadius: '4px' }}>
-                        {atendimento.status_display}
+                        {getStatusLabel(statusAtual)}
                     </span>
+
                     <Button
                         icon="pi pi-sync"
                         className="p-button-rounded p-button-success p-button-sm"
@@ -158,7 +160,8 @@ const AtendimentoDetalhadoCard = ({ atendimento, onFinalizar }) => {
           onClick={() => onFinalizar(atendimento.numero, {
             descricao: anotacoes,
             valor_causa: valorCausa,
-            numero_processo: numeroProcesso
+            numero_processo: numeroProcesso,
+            status: statusAtual
           })}
         />
       </div>
@@ -176,13 +179,13 @@ const AtendimentoDetalhadoCard = ({ atendimento, onFinalizar }) => {
             Selecione o novo status:
             </label>
             <Dropdown
-            id="status"
-            value={novoStatus}
-            onChange={(e) => setNovoStatus(e.value)}
-            options={opcoesStatus}
-            placeholder="Escolha um status"
-            className="w-full"
-            />
+                id="status"
+                value={novoStatus}
+                onChange={(e) => setNovoStatus(e.value)}
+                options={opcoesStatus}
+                placeholder="Escolha um status"
+                className="w-full"
+                />
         </div>
 
         <div className="flex justify-content-end">

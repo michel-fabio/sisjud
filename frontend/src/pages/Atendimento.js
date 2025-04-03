@@ -9,6 +9,24 @@ function Atendimento() {
   const location = useLocation();
   const navigate = useNavigate();
   const atendimento = location.state?.atendimento;
+  const [opcoesStatus, setOpcoesStatus] = useState([]);
+
+  useEffect(() => {
+    const fetchStatusOptions = async () => {
+      try {
+        const response = await api.get('/atendimentos/status/');
+        const formatadas = response.data.map(op => ({
+          label: op.rotulo,
+          value: op.valor
+        }));
+        setOpcoesStatus(formatadas);
+      } catch (error) {
+        console.error('Erro ao buscar status:', error);
+      }
+    };
+  
+    fetchStatusOptions();
+  }, []);
 
   const finalizarAtendimento = async (numero, dados) => {
     try {
@@ -42,6 +60,7 @@ function Atendimento() {
           <AtendimentoDetalhadoCard
             atendimento={atendimento}
             onFinalizar={finalizarAtendimento}
+            opcoesStatus={opcoesStatus}
           />
         ) : (
           <p>Atendimento não encontrado.</p>

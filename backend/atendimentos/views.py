@@ -20,6 +20,14 @@ class AtendimentoViewSet(viewsets.ModelViewSet):
             .select_related('area_juridica', 'assunto', 'advogado')\
             .order_by('-data_atendimento')
     
+    @action(detail=False, methods=['get'], url_path='status')
+    def listar_status(self, request):
+        status_list = [
+            {'valor': key, 'rotulo': label}
+            for key, label in Atendimento.STATUS_CHOICES
+        ]
+        return Response(status_list)
+    
     def perform_create(self, serializer):
         user = self.request.user
         data_atendimento = self.request.data.get('data_atendimento')
@@ -118,7 +126,7 @@ class AtendimentoViewSet(viewsets.ModelViewSet):
         try:
             atendimento = Atendimento.objects.get(numero_atendimento=pk)
 
-            atendimento.status = 'finalizado'
+            atendimento.status = request.data.get('status')
             atendimento.advogado = request.user.advogado
 
             # Corrigido aqui
@@ -139,8 +147,7 @@ class AtendimentoViewSet(viewsets.ModelViewSet):
             return Response({'erro': 'Usuário não é um advogado.'}, status=403)
 
         atendimentos = Atendimento.objects.filter(
-            advogado=request.user.advogado,
-            status='finalizado'
+            advogado=request.user.advogado
         ).select_related('cliente', 'area_juridica', 'assunto')
 
         dados = [

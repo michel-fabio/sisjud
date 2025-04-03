@@ -76,7 +76,7 @@ function AtendimentosRealizados() {
             <Column field="numero_processo" header="PROCESSO" filter filterPlaceholder="Filtrar" filterMatchMode="contains" style={{ textAlign: 'left' }} headerStyle={headerStyle} />
             <Column field="assunto" header="ASSUNTO" filter filterPlaceholder="Filtrar" filterMatchMode="contains" style={{ textAlign: 'left' }} headerStyle={headerStyle} />
             <Column field="cliente" header="CLIENTE" filter filterPlaceholder="Filtrar" filterMatchMode="contains" style={{ textAlign: 'left' }} headerStyle={headerStyle} />
-            <Column field="status" header="STATUS" filter filterPlaceholder="Filtrar" filterMatchMode="contains" style={{ textAlign: 'left' }} headerStyle={headerStyle} />
+            <Column field="status_display" header="STATUS" filter filterPlaceholder="Filtrar" filterMatchMode="contains" style={{ textAlign: 'left' }} headerStyle={headerStyle} />
             <Column
               field="valor_causa"
               header="VALOR"
