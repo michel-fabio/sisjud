@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import SideBarAdvogado from '../components/SideBarAdvogado';
 import AtendimentoCard from '../components/AtendimentoCard';
 import api from '../services/api';
 
 function AtendimentosHoje() {
   const [atendimentos, setAtendimentos] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchAtendimentos = async () => {
@@ -20,6 +22,13 @@ function AtendimentosHoje() {
     fetchAtendimentos();
   }, []);
 
+  const iniciarAtendimento = (atendimentoId) => {
+    const atendimentoSelecionado = atendimentos.find(a => a.id === atendimentoId);
+    if (atendimentoSelecionado) {
+      navigate('/atendimento', { state: { atendimento: atendimentoSelecionado } });
+    }
+  };
+
   return (
     <div style={{ display: 'flex', position: 'relative' }}>
       <SideBarAdvogado />
@@ -32,9 +41,8 @@ function AtendimentosHoje() {
             <div className="p-col-12 p-md-6 p-lg-4" key={atendimento.id}>
               <AtendimentoCard
                 atendimento={atendimento}
-                onIniciar={(id) => console.log("Iniciar atendimento:", id)}
+                onIniciar={iniciarAtendimento}
               />
-
             </div>
           ))}
 

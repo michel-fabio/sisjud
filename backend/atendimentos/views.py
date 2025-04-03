@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -98,14 +98,41 @@ class AtendimentoViewSet(viewsets.ModelViewSet):
 
         dados = [
             {
+                'data': atendimento.data_atendimento,
                 'numero': atendimento.numero_atendimento,
                 'area': atendimento.area_juridica.nome,
                 'assunto': atendimento.assunto.titulo,
+                'status': atendimento.status,
+                'valorCausa': atendimento.valor_causa,
+                'numeroProcesso': atendimento.numero_processo,
+                'anotacoes': atendimento.anotacoes,
                 'cliente': atendimento.cliente.first_name
             }
             for atendimento in atendimentos
         ]
         return Response(dados)
+    
+    @action(detail=True, methods=['patch'], url_path='finalizar')
+    def finalizar(self, request, pk=None):
+        try:
+            atendimento = Atendimento.objects.get(numero_atendimento=pk)
+
+            atendimento.status = 'finalizado'
+            atendimento.advogado = request.user.advogado
+
+            # Corrigido aqui
+            atendimento.numero_processo = request.data.get('numero_processo', '')
+            atendimento.valor_causa = request.data.get('valor_causa', None)
+            atendimento.anotacoes = request.data.get('descricao', '')
+
+            atendimento.save()
+            return Response({'mensagem': 'Atendimento finalizado com sucesso.'})
+        except Atendimento.DoesNotExist:
+            return Response({'erro': 'Atendimento não encontrado.'}, status=404)
+        except Exception as e:
+            return Response({'erro': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
 
 class AreaJuridicaViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = AreaJuridica.objects.all()

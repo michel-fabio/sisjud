@@ -9,21 +9,25 @@ import { InputNumber } from 'primereact/inputnumber';
 
 
 const AtendimentoDetalhadoCard = ({ atendimento, onFinalizar }) => {
+    console.log(atendimento)
     const [mostrarModal, setMostrarModal] = useState(false);
-    const [novoStatus, setNovoStatus] = useState(null);
+    const [novoStatus, setNovoStatus] = useState(atendimento.status);
     const toast = useRef(null);
     const [numeroProcesso, setNumeroProcesso] = useState(atendimento.numeroProcesso);
     const [anotacoes, setAnotacoes] = useState(atendimento.anotacoes || "");
     const [valorCausa, setValorCausa] = useState(() => {
-    const valor = atendimento.valorCausa;
-        if (!valor) return null;    
-        // Remove R$, pontos e converte vírgula para ponto
+        const valor = atendimento.valorCausa;
+        
+        if (typeof valor === 'number') return valor; // já é número
+        if (!valor || typeof valor !== 'string') return null;
+        
         const valorNumerico = parseFloat(
             valor.replace("R$", "").replace(/\./g, "").replace(",", ".").trim()
         );
-            return isNaN(valorNumerico) ? null : valorNumerico;    
-    });
-    
+        
+        return isNaN(valorNumerico) ? null : valorNumerico;
+        });
+
     const opcoesStatus = [
         { label: 'Aguardando entrada do protocolo no Tribunal de Justiça', value: 'aguardando' },
         { label: 'Protocolo realizado', value: 'protocolo_realizado' },
@@ -64,7 +68,7 @@ const AtendimentoDetalhadoCard = ({ atendimento, onFinalizar }) => {
                 top: "-10px" // opcional: empurra um pouco pra cima
             }}
             >
-            Atendimento - {atendimento.id}
+            Atendimento - {atendimento.numero}
         </h3>
 
       {/* Linha superior: Info + valor/processo */}
@@ -151,7 +155,11 @@ const AtendimentoDetalhadoCard = ({ atendimento, onFinalizar }) => {
           label="Finalizar"
           icon="pi pi-check"
           className="p-button-success px-5"
-          onClick={() => onFinalizar(atendimento.id)}
+          onClick={() => onFinalizar(atendimento.numero, {
+            descricao: anotacoes,
+            valor_causa: valorCausa,
+            numero_processo: numeroProcesso
+          })}
         />
       </div>
       <Toast ref={toast} />

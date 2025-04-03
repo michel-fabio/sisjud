@@ -26,7 +26,7 @@ class Atendimento(models.Model):
 
     numero_atendimento = models.CharField(max_length=20, unique=True, blank=True, null=True)
     cliente = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name="atendimentos")
-    advogado = models.ForeignKey(Advogado, on_delete=models.SET_NULL, null=True)
+    advogado = models.ForeignKey(Advogado, on_delete=models.SET_NULL, null=True, blank=True)
     area_juridica = models.ForeignKey(AreaJuridica, on_delete=models.CASCADE)
     assunto = models.ForeignKey(Assunto, on_delete=models.CASCADE)
     data_atendimento = models.DateTimeField()
