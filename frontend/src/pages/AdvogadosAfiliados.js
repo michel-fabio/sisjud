@@ -1,52 +1,65 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import SideBarAdministrador from '../components/SideBarAdministrador';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import { Dropdown } from 'primereact/dropdown';
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
 import Swal from 'sweetalert2';
-import { useRef } from 'react';
-import api from "../services/api";
-
+import api from '../services/api';
 
 function AdvogadosAfiliados() {
   const [visible, setVisible] = useState(false);
   const [nome, setNome] = useState('');
+  const [email, setEmail] = useState('');
   const [oab, setOab] = useState('');
   const [areas, setAreas] = useState(['']);
-  const toast = useRef(null);
-  const [email, setEmail] = useState('');
+  const [advogados, setAdvogados] = useState([]);
+  const [opcoesDeArea, setOpcoesDeArea] = useState([]);
 
+  useEffect(() => {
+    fetchAdvogados();
+    fetchAreas();
+  }, []);
 
-  const adicionarArea = () => {
-    setAreas([...areas, '']);
+  const fetchAdvogados = async () => {
+    try {
+      const response = await api.get("advogados/listar/");
+      setAdvogados(response.data);
+    } catch (error) {
+      console.error("Erro ao buscar advogados:", error);
+    }
   };
+
+  const fetchAreas = async () => {
+    try {
+      const response = await api.get("areas/");
+      const formatadas = response.data.map((area) => ({ label: area.nome, value: area.nome }));
+      setOpcoesDeArea(formatadas);
+    } catch (error) {
+      console.error("Erro ao buscar áreas jurídicas:", error);
+    }
+  };
+
+  const gerarSenha = () => {
+    const letras = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    return Array.from({ length: 10 }, () => letras[Math.floor(Math.random() * letras.length)]).join("");
+  };
+
+  const limparFormulario = () => {
+    setNome('');
+    setEmail('');
+    setOab('');
+    setAreas(['']);
+  };
+
+  const adicionarArea = () => setAreas([...areas, '']);
 
   const atualizarArea = (index, novoValor) => {
     const novasAreas = [...areas];
     novasAreas[index] = novoValor;
     setAreas(novasAreas);
-  };
-
-  const advogados = [
-    { nome: 'Advogado 1', area: 'Cível, Consumidor e Família', oab: '1234' },
-    { nome: 'Advogado 2', area: 'Criminal', oab: '5678' },
-    { nome: 'Advogado 3', area: 'Trabalhista e Tributária', oab: '9012' },
-  ];
-
-  const opcoesDeArea = [
-    { label: 'Cível', value: 'Cível' },
-    { label: 'Criminal', value: 'Criminal' },
-    { label: 'Família', value: 'Família' },
-    { label: 'Trabalhista', value: 'Trabalhista' },
-    { label: 'Tributária', value: 'Tributária' },
-  ];
-
-  const limparFormulario = () => {
-    setNome('');
-    setOab('');
-    setAreas(['']);
-    setEmail('');
   };
 
   const removerArea = (index) => {
@@ -55,11 +68,6 @@ function AdvogadosAfiliados() {
     setAreas(novas.length === 0 ? [''] : novas);
   };
 
-  const gerarSenha = () => {
-    const letras = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    return Array.from({ length: 10 }, () => letras[Math.floor(Math.random() * letras.length)]).join("");
-  };
-  
   const handleCadastro = async () => {
     if (!nome || !email || !oab || areas.some((a) => !a)) {
       Swal.fire({
@@ -70,9 +78,9 @@ function AdvogadosAfiliados() {
       });
       return;
     }
-  
+
     const senha = gerarSenha();
-  
+
     try {
       await api.post("advogados/cadastrar/", {
         nome,
@@ -81,17 +89,18 @@ function AdvogadosAfiliados() {
         numero_oab: oab,
         areas_atuacao: areas.join(", "),
       });
-    
-      // Fechar e limpar antes do alerta
+
       setVisible(false);
       limparFormulario();
-    
+
       await Swal.fire({
         icon: 'success',
         title: 'Cadastro realizado',
         text: 'O advogado foi cadastrado com sucesso.',
         confirmButtonColor: '#0097b2',
       });
+
+      fetchAdvogados();
     } catch (error) {
       console.error("Erro ao cadastrar advogado:", error);
       Swal.fire({
@@ -102,30 +111,33 @@ function AdvogadosAfiliados() {
       });
     }
   };
-  
+
+  const headerStyle = {
+    backgroundColor: '#0097b2',
+    color: 'white',
+    textAlign: 'left',
+  };
 
   const modalFooter = (
     <div style={{ padding: '1rem', textAlign: 'center' }}>
-        <Button
-            label="Confirmar"
-            className="w-full"
-            style={{ backgroundColor: '#0097b2', border: 'none' }}
-            onClick={handleCadastro}
-            />
+      <Button
+        label="Confirmar"
+        className="w-full"
+        style={{ backgroundColor: '#0097b2', border: 'none' }}
+        onClick={handleCadastro}
+      />
     </div>
-    );
+  );
 
   return (
     <div style={{ display: 'flex', position: 'relative' }}>
       <SideBarAdministrador />
 
       <div style={{ flex: 1, padding: '2rem', position: 'relative' }}>
-        {/* Ícone do sistema */}
         <div style={{ position: 'absolute', top: '10px', right: '20px' }}>
           <img src="./logo.png" alt="Ícone do Sistema" style={{ width: '40px', height: '40px' }} />
         </div>
 
-        {/* Botão de cadastrar */}
         <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1.5rem', marginTop: '3rem' }}>
           <button
             onClick={() => setVisible(true)}
@@ -144,140 +156,119 @@ function AdvogadosAfiliados() {
           </button>
         </div>
 
-        {/* Tabela */}
-        <table style={{
-          width: '100%',
-          borderCollapse: 'collapse',
-          border: '2px solid #a0b4ff',
-        }}>
-          <thead>
-            <tr style={{ backgroundColor: '#0097b2', color: 'white' }}>
-              <th style={thStyle}>ADVOGADO</th>
-              <th style={thStyle}>ÁREA</th>
-              <th style={thStyle}>NÚMERO OAB</th>
-            </tr>
-          </thead>
-          <tbody>
-            {advogados.map((adv, index) => (
-              <tr key={index} style={{ backgroundColor: index % 2 === 0 ? '#f6f8fb' : 'white' }}>
-                <td style={tdStyle}>{adv.nome}</td>
-                <td style={tdStyle}>{adv.area}</td>
-                <td style={tdStyle}>{adv.oab}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <DataTable
+          value={advogados}
+          paginator
+          rows={5}
+          rowsPerPageOptions={[5, 10, 20]}
+          responsiveLayout="scroll"
+          filterDisplay="row"
+          stripedRows
+          emptyMessage="Nenhum advogado encontrado."
+          style={{ marginTop: '1rem' }}
+          headerStyle={headerStyle}
+        >
+          <Column
+            field="nome"
+            header="ADVOGADO"
+            filter
+            filterPlaceholder="Buscar por nome"
+            filterMatchMode="contains"
+            style={{ textAlign: 'left' }}
+            headerStyle={headerStyle}
+          />
+          <Column
+            field="areas_atuacao"
+            header="ÁREA"
+            filter
+            filterPlaceholder="Buscar por área"
+            filterMatchMode="contains"
+            style={{ textAlign: 'left' }}
+            headerStyle={headerStyle}
+          />
+          <Column
+            field="numero_oab"
+            header="NÚMERO OAB"
+            filter
+            filterPlaceholder="Buscar por OAB"
+            filterMatchMode="contains"
+            style={{ textAlign: 'left' }}
+            headerStyle={headerStyle}
+          />
+        </DataTable>
 
-        {/* Modal */}
         <Dialog
-            header="CADASTRAR ADVOGADO"
-            visible={visible}
-            onHide={() => {
-                setVisible(false);
-                limparFormulario();
-            }}
-            style={{ width: '400px', maxHeight: '90vh', overflowY: 'auto', borderRadius: '20px' }}
-            contentStyle={{ backgroundColor: '#f1f5f9', paddingBottom: '2rem' }}
-            footer={modalFooter}
-            >
-            <p style={{ margin: '0 0 20px 0' }}>
-                Informe os dados do novo advogado afiliado
-            </p>
+          header="CADASTRAR ADVOGADO"
+          visible={visible}
+          onHide={() => {
+            setVisible(false);
+            limparFormulario();
+          }}
+          style={{ width: '400px', maxHeight: '90vh', overflowY: 'auto', borderRadius: '20px' }}
+          contentStyle={{ backgroundColor: '#f1f5f9', paddingBottom: '2rem' }}
+          footer={modalFooter}
+        >
+          <p style={{ margin: '0 0 20px 0' }}>Informe os dados do novo advogado afiliado</p>
 
-            {/* Nome */}
-            <div className="p-inputgroup mb-3">
-                <span className="p-inputgroup-addon">
-                <i className="pi pi-user" />
-                </span>
-                <InputText placeholder="Nome Completo" value={nome} onChange={(e) => setNome(e.target.value)} className="w-full" />
-            </div>
+          <div className="p-inputgroup mb-3">
+            <span className="p-inputgroup-addon">
+              <i className="pi pi-user" />
+            </span>
+            <InputText placeholder="Nome Completo" value={nome} onChange={(e) => setNome(e.target.value)} className="w-full" />
+          </div>
 
-            {/* Email */}
-            <div className="p-inputgroup mb-3">
-              <span className="p-inputgroup-addon">
-                <i className="pi pi-envelope" />
-              </span>
-              <InputText
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full"
-              />
-            </div>
+          <div className="p-inputgroup mb-3">
+            <span className="p-inputgroup-addon">
+              <i className="pi pi-envelope" />
+            </span>
+            <InputText placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full" />
+          </div>
 
+          <div className="p-inputgroup mb-3">
+            <span className="p-inputgroup-addon">
+              <i className="pi pi-id-card" />
+            </span>
+            <InputText placeholder="Número Carteira OAB" value={oab} onChange={(e) => setOab(e.target.value)} className="w-full" />
+          </div>
 
-            {/* OAB */}
-            <div className="p-inputgroup mb-3">
-                <span className="p-inputgroup-addon">
-                <i className="pi pi-id-card" />
-                </span>
-                <InputText placeholder="Número Carteira OAB" value={oab} onChange={(e) => setOab(e.target.value)} className="w-full" />
-            </div>
-
-            {/* Campos dinâmicos de Área */}
-            {areas.map((valor, index) => {
-            // Filtra as opções que ainda não foram selecionadas (exceto a do próprio campo)
+          {areas.map((valor, index) => {
             const opcoesFiltradas = opcoesDeArea.filter(
-                (opcao) => !areas.includes(opcao.value) || opcao.value === valor
+              (opcao) => !areas.includes(opcao.value) || opcao.value === valor
             );
-
             const podeAdicionarMais = areas.length < opcoesDeArea.length;
 
             return (
-                <div className="p-inputgroup mb-3" key={index}>
+              <div className="p-inputgroup mb-3" key={index}>
                 <span className="p-inputgroup-addon">
-                    <i className="pi pi-book" />
+                  <i className="pi pi-book" />
                 </span>
 
                 <Dropdown
-                    options={opcoesFiltradas}
-                    value={valor}
-                    onChange={(e) => atualizarArea(index, e.value)}
-                    placeholder={`Área ${index + 1}`}
-                    className="w-full"
+                  options={opcoesFiltradas}
+                  value={valor}
+                  onChange={(e) => atualizarArea(index, e.value)}
+                  placeholder={`Área ${index + 1}`}
+                  className="w-full"
                 />
 
-                {/* Remover área */}
                 {areas.length > 1 && (
-                    <span
-                    className="p-inputgroup-addon"
-                    style={{ cursor: 'pointer' }}
-                    onClick={() => removerArea(index)}
-                    >
+                  <span className="p-inputgroup-addon" style={{ cursor: 'pointer' }} onClick={() => removerArea(index)}>
                     <i className="pi pi-times" />
-                    </span>
+                  </span>
                 )}
 
-                {/* Adicionar nova área */}
                 {index === areas.length - 1 && podeAdicionarMais && (
-                    <span
-                    className="p-inputgroup-addon"
-                    style={{ cursor: 'pointer' }}
-                    onClick={adicionarArea}
-                    >
+                  <span className="p-inputgroup-addon" style={{ cursor: 'pointer' }} onClick={adicionarArea}>
                     <i className="pi pi-plus" />
-                    </span>
+                  </span>
                 )}
-                </div>
+              </div>
             );
-            })}
-            </Dialog>
+          })}
+        </Dialog>
       </div>
     </div>
   );
 }
-
-const thStyle = {
-  padding: '16px',
-  textAlign: 'center',
-  fontSize: '16px',
-};
-
-const tdStyle = {
-  padding: '16px',
-  textAlign: 'center',
-  fontSize: '15px',
-  borderTop: '1px solid #a0b4ff',
-};
 
 export default AdvogadosAfiliados;

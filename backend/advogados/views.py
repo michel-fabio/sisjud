@@ -1,8 +1,9 @@
 from rest_framework.views import APIView
+from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework import status
 from .models import Advogado, Usuario
-from django.contrib.auth.models import User
+from .serializers import AdvogadoSerializer
 
 class CadastroAdvogadoAPIView(APIView):
     def post(self, request):
@@ -22,8 +23,7 @@ class CadastroAdvogadoAPIView(APIView):
             username=email,
             email=email,
             password=senha,
-            first_name=nome.split()[0],
-            last_name=' '.join(nome.split()[1:]),
+            first_name=nome,
             tipo='advogado'
         )
 
@@ -37,3 +37,7 @@ class CadastroAdvogadoAPIView(APIView):
             "mensagem": "Advogado cadastrado com sucesso.",
             "advogado_id": advogado.id
         }, status=status.HTTP_201_CREATED)
+    
+class ListarAdvogadosAPIView(ListAPIView):
+    queryset = Advogado.objects.select_related('usuario').all()
+    serializer_class = AdvogadoSerializer
