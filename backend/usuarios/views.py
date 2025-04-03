@@ -1,5 +1,6 @@
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.views import APIView
+from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth import get_user_model
@@ -46,3 +47,9 @@ class LoginAdvogadoView(APIView):
         user = UserModel.objects.get(email=email)
         if not user.check_password(password):
             return Response({'detail': 'Credenciais inválidas.'}, status=status.HTTP_401_UNAUTHORIZED)
+        
+class ListarClientesAPIView(ListAPIView):
+    serializer_class = UsuarioSerializer
+
+    def get_queryset(self):
+        return Usuario.objects.filter(tipo='cliente')

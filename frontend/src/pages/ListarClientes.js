@@ -1,61 +1,72 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import SideBarAdministrador from '../components/SideBarAdministrador';
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
+import api from '../services/api';
 
 function ListarClientes() {
-  const clientes = [
-    { nome: 'Cliente 1', email: 'E-mail Cliente 1' },
-    { nome: 'Cliente 2', email: 'E-mail Cliente 2' },
-    { nome: 'Cliente 3', email: 'E-mail Cliente 3' },
-  ];
+  const [clientes, setClientes] = useState([]);
+
+  useEffect(() => {
+    fetchClientes();
+  }, []);
+
+  const fetchClientes = async () => {
+    try {
+      const response = await api.get('clientes/');
+      setClientes(response.data);
+    } catch (error) {
+      console.error('Erro ao buscar clientes:', error);
+    }
+  };
+
+  const headerStyle = {
+    backgroundColor: '#0097b2',
+    color: 'white',
+    textAlign: 'left',
+  };
 
   return (
     <div style={{ display: 'flex', position: 'relative' }}>
       <SideBarAdministrador />
 
       <div style={{ flex: 1, padding: '2rem', position: 'relative' }}>
-        {/* Ícone do sistema no canto superior direito */}
         <div style={{ position: 'absolute', top: '10px', right: '20px' }}>
           <img src="./logo.png" alt="Ícone do Sistema" style={{ width: '40px', height: '40px' }} />
         </div>
 
-        {/* Tabela de clientes */}
-        <table style={{
-          width: '100%',
-          borderCollapse: 'collapse',
-          border: '2px solid #a0b4ff',
-          marginTop: '3rem',
-        }}>
-          <thead>
-            <tr style={{ backgroundColor: '#0097b2', color: 'white' }}>
-              <th style={thStyle}>CLIENTE</th>
-              <th style={thStyle}>E-MAIL</th>
-            </tr>
-          </thead>
-          <tbody>
-            {clientes.map((cliente, index) => (
-              <tr key={index} style={{ backgroundColor: index % 2 === 0 ? '#f6f8fb' : 'white' }}>
-                <td style={tdStyle}>{cliente.nome}</td>
-                <td style={tdStyle}>{cliente.email}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <DataTable
+          value={clientes}
+          paginator
+          rows={5}
+          rowsPerPageOptions={[5, 10, 20]}
+          filterDisplay="row"
+          stripedRows
+          emptyMessage="Nenhum cliente encontrado."
+          style={{ marginTop: '3rem' }}
+        >
+          <Column
+            field="first_name"
+            header="CLIENTE"
+            filter
+            filterPlaceholder="Buscar por nome"
+            filterMatchMode="contains"
+            style={{ textAlign: 'left' }}
+            headerStyle={headerStyle}
+          />
+          <Column
+            field="email"
+            header="E-MAIL"
+            filter
+            filterPlaceholder="Buscar por email"
+            filterMatchMode="contains"
+            style={{ textAlign: 'left' }}
+            headerStyle={headerStyle}
+          />
+        </DataTable>
       </div>
     </div>
   );
 }
-
-const thStyle = {
-  padding: '16px',
-  textAlign: 'center',
-  fontSize: '16px',
-};
-
-const tdStyle = {
-  padding: '16px',
-  textAlign: 'center',
-  fontSize: '15px',
-  borderTop: '1px solid #a0b4ff',
-};
 
 export default ListarClientes;
