@@ -3,6 +3,7 @@ from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from backend.advogados import serializers
 from .models import Atendimento, AreaJuridica, Assunto, MotivoCancelamento
 from .serializers import AtendimentoSerializer, AreaJuridicaSerializer, AssuntoSerializer, AtendimentoPendenteSerializer, MotivoCancelamentoSerializer
 from rest_framework.permissions import IsAuthenticated
