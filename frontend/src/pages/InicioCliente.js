@@ -22,7 +22,7 @@ const AtendimentoCard = ({ atendimento }) => {
       <p><strong>OAB:</strong> {atendimento.oab ? atendimento.oab : "Advogado ainda não foi definido"}</p>
       <p><strong>Data:</strong> {atendimento.data}</p>
       <p><strong>Valor da Causa:</strong> R$ {Number(atendimento.valor).toLocaleString()}</p>
-      <p><strong>Status:</strong> {atendimento.status}</p>
+      <p><strong>Status:</strong> {atendimento.status_display}</p>
     </div>
   );
 };

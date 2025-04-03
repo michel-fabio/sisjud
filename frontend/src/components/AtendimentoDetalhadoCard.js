@@ -11,7 +11,7 @@ import { InputNumber } from 'primereact/inputnumber';
 const AtendimentoDetalhadoCard = ({ atendimento, onFinalizar }) => {
     console.log(atendimento)
     const [mostrarModal, setMostrarModal] = useState(false);
-    const [novoStatus, setNovoStatus] = useState(atendimento.status);
+    const [novoStatus, setNovoStatus] = useState(atendimento.status_display);
     const toast = useRef(null);
     const [numeroProcesso, setNumeroProcesso] = useState(atendimento.numero_processo);
     const [anotacoes, setAnotacoes] = useState(atendimento.anotacoes || "");
@@ -82,7 +82,7 @@ const AtendimentoDetalhadoCard = ({ atendimento, onFinalizar }) => {
                 <p style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <strong>Status:</strong>
                     <span style={{ backgroundColor: '#e0e0e0', padding: '4px 8px', borderRadius: '4px' }}>
-                        {atendimento.status}
+                        {atendimento.status_display}
                     </span>
                     <Button
                         icon="pi pi-sync"

@@ -3,7 +3,6 @@ from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from backend.advogados import serializers
 from .models import Atendimento, AreaJuridica, Assunto, MotivoCancelamento
 from .serializers import AtendimentoSerializer, AreaJuridicaSerializer, AssuntoSerializer, AtendimentoPendenteSerializer, MotivoCancelamentoSerializer
 from rest_framework.permissions import IsAuthenticated
@@ -104,6 +103,7 @@ class AtendimentoViewSet(viewsets.ModelViewSet):
                 'area': atendimento.area_juridica.nome,
                 'assunto': atendimento.assunto.titulo,
                 'status': atendimento.status,
+                'status_display': atendimento.get_status_display(),
                 'valor_causa': atendimento.valor_causa,
                 'numero_processo': atendimento.numero_processo,
                 'anotacoes': atendimento.anotacoes,
@@ -150,6 +150,7 @@ class AtendimentoViewSet(viewsets.ModelViewSet):
                 'area': atendimento.area_juridica.nome,
                 'assunto': atendimento.assunto.titulo,
                 'status': atendimento.status,
+                'status_display': atendimento.get_status_display(),
                 'valor_causa': atendimento.valor_causa,
                 'numero_processo': atendimento.numero_processo,
                 'anotacoes': atendimento.anotacoes,
