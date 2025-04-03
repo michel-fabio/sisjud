@@ -1,62 +1,55 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import SideBarAdvogado from '../components/SideBarAdvogado';
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import api from '../services/api';
 
-const AtendimentosRealizados = () => {
+function AtendimentosRealizados() {
   const [atendimentos, setAtendimentos] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const carregarAtendimentos = async () => {
-      setLoading(true);
+    const fetchAtendimentos = async () => {
       try {
-        const response = await api.get('/atendimentos-finalizados/');
+        const response = await api.get('/atendimentos/finalizados/');
         setAtendimentos(response.data);
       } catch (error) {
         console.error('Erro ao buscar atendimentos finalizados:', error);
-        // Fallback temporário com dados mockados
-        setAtendimentos([
-          {
-            id: '2301010001',
-            data: '01/01/2023',
-            processo: '1490631-91.2025.6.07.8257',
-            assunto: 'Acidente de Trânsito',
-            cliente: 'Cliente 1',
-            status: 'Finalizado com causa ganha',
-            valor: 20000,
-          },
-          {
-            id: '2301010002',
-            data: '01/01/2023',
-            processo: '5758254-93.2025.1.00.5748',
-            assunto: 'Demissão sem aviso prévio',
-            cliente: 'Cliente 2',
-            status: 'Finalizado com causa perdida',
-            valor: 35000,
-          },
-          {
-            id: '2301020001',
-            data: '02/01/2023',
-            processo: '5293213-57.2025.7.09.4856',
-            assunto: 'Cobrança Indevida',
-            cliente: 'Cliente 3',
-            status: 'Aguardando a sentença do Juiz',
-            valor: 5000,
-          },
-        ]);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
 
-    carregarAtendimentos();
+    fetchAtendimentos();
   }, []);
 
+  const irParaDetalhes = (atendimento) => {
+    navigate('/atendimento', { state: { atendimento } });
+  };
+
+  const headerStyle = {
+    backgroundColor: '#00bf63',
+    color: 'white',
+    textAlign: 'left'
+  };
+
+  const botoesAcoes = (rowData) => (
+    <Button
+      icon="pi pi-file-edit"
+      className="p-button-text p-button-rounded"
+      style={{ color: '#00bf63' }}
+      onClick={() => irParaDetalhes(rowData)}
+    />
+  );
+
   return (
-    <div style={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
+    <div style={{ display: 'flex', height: '100vh' }}>
       <SideBarAdvogado />
-      <div style={{ flex: 1, padding: '20px', position: 'relative' }}>
+      <div style={{ flex: 1, padding: '2rem' }}>
         <div style={{ position: 'absolute', top: '10px', right: '20px' }}>
           <img src="/logo.png" alt="Ícone do Sistema" style={{ width: '40px', height: '40px' }} />
         </div>
@@ -68,56 +61,35 @@ const AtendimentosRealizados = () => {
             <ProgressSpinner />
           </div>
         ) : (
-          <div style={{ overflowX: 'auto', marginTop: '20px' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-              <thead style={{ backgroundColor: '#00bf63', color: 'white' }}>
-                <tr>
-                  <th style={thStyle}>Data do Atendimento</th>
-                  <th style={thStyle}>Número do Atendimento</th>
-                  <th style={thStyle}>Processo</th>
-                  <th style={thStyle}>Assunto</th>
-                  <th style={thStyle}>Cliente</th>
-                  <th style={thStyle}>Status</th>
-                  <th style={thStyle}>Valor da Causa</th>
-                  <th style={thStyle}></th>
-                </tr>
-              </thead>
-              <tbody>
-                {atendimentos.map((item) => (
-                  <tr key={item.id} style={{ borderBottom: '1px solid #ccc' }}>
-                    <td style={tdStyle}>{item.data}</td>
-                    <td style={tdStyle}>{item.id}</td>
-                    <td style={tdStyle}>{item.processo}</td>
-                    <td style={tdStyle}>{item.assunto}</td>
-                    <td style={tdStyle}>{item.cliente}</td>
-                    <td style={tdStyle}>{item.status}</td>
-                    <td style={tdStyle}>R$ {item.valor.toLocaleString('pt-BR')}</td>
-                    <td style={{ textAlign: 'center' }}>
-                        <Button 
-                            icon="pi pi-pen-to-square" 
-                            className="p-button-rounded p-button-text" 
-                            style={{ color: '#00bf63' }} 
-                        />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <DataTable
+            value={atendimentos}
+            paginator
+            rows={5}
+            rowsPerPageOptions={[5, 10, 20]}
+            stripedRows
+            filterDisplay="row"
+            emptyMessage="Nenhum atendimento encontrado."
+            style={{ marginTop: '1rem' }}
+          >
+            <Column field="data" header="DATA" filter filterPlaceholder="Filtrar" filterMatchMode="contains" style={{ textAlign: 'left' }} headerStyle={headerStyle} />
+            <Column field="numero" header="NÚMERO" filter filterPlaceholder="Filtrar" filterMatchMode="contains" style={{ textAlign: 'left' }} headerStyle={headerStyle} />
+            <Column field="numero_processo" header="PROCESSO" filter filterPlaceholder="Filtrar" filterMatchMode="contains" style={{ textAlign: 'left' }} headerStyle={headerStyle} />
+            <Column field="assunto" header="ASSUNTO" filter filterPlaceholder="Filtrar" filterMatchMode="contains" style={{ textAlign: 'left' }} headerStyle={headerStyle} />
+            <Column field="cliente" header="CLIENTE" filter filterPlaceholder="Filtrar" filterMatchMode="contains" style={{ textAlign: 'left' }} headerStyle={headerStyle} />
+            <Column field="status" header="STATUS" filter filterPlaceholder="Filtrar" filterMatchMode="contains" style={{ textAlign: 'left' }} headerStyle={headerStyle} />
+            <Column
+              field="valor_causa"
+              header="VALOR"
+              body={(rowData) => `R$ ${parseFloat(rowData.valor_causa).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
+              style={{ textAlign: 'left' }}
+              headerStyle={headerStyle}
+            />
+            <Column body={botoesAcoes} style={{ textAlign: 'center' }} headerStyle={headerStyle} />
+          </DataTable>
         )}
       </div>
     </div>
   );
-};
-
-const thStyle = {
-  padding: '12px',
-  textAlign: 'left',
-  fontWeight: 'bold',
-};
-
-const tdStyle = {
-  padding: '10px',
-};
+}
 
 export default AtendimentosRealizados;

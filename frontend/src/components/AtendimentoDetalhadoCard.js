@@ -13,10 +13,10 @@ const AtendimentoDetalhadoCard = ({ atendimento, onFinalizar }) => {
     const [mostrarModal, setMostrarModal] = useState(false);
     const [novoStatus, setNovoStatus] = useState(atendimento.status);
     const toast = useRef(null);
-    const [numeroProcesso, setNumeroProcesso] = useState(atendimento.numeroProcesso);
+    const [numeroProcesso, setNumeroProcesso] = useState(atendimento.numero_processo);
     const [anotacoes, setAnotacoes] = useState(atendimento.anotacoes || "");
     const [valorCausa, setValorCausa] = useState(() => {
-        const valor = atendimento.valorCausa;
+        const valor = atendimento.valor_causa;
         
         if (typeof valor === 'number') return valor; // já é número
         if (!valor || typeof valor !== 'string') return null;

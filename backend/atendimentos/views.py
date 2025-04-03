@@ -103,8 +103,8 @@ class AtendimentoViewSet(viewsets.ModelViewSet):
                 'area': atendimento.area_juridica.nome,
                 'assunto': atendimento.assunto.titulo,
                 'status': atendimento.status,
-                'valorCausa': atendimento.valor_causa,
-                'numeroProcesso': atendimento.numero_processo,
+                'valor_causa': atendimento.valor_causa,
+                'numero_processo': atendimento.numero_processo,
                 'anotacoes': atendimento.anotacoes,
                 'cliente': atendimento.cliente.first_name
             }
@@ -131,6 +131,32 @@ class AtendimentoViewSet(viewsets.ModelViewSet):
             return Response({'erro': 'Atendimento não encontrado.'}, status=404)
         except Exception as e:
             return Response({'erro': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        
+    @action(detail=False, methods=['get'], url_path='finalizados')
+    def atendimentos_finalizados(self, request):
+        if not hasattr(request.user, 'advogado'):
+            return Response({'erro': 'Usuário não é um advogado.'}, status=403)
+
+        atendimentos = Atendimento.objects.filter(
+            advogado=request.user.advogado,
+            status='finalizado'
+        ).select_related('cliente', 'area_juridica', 'assunto')
+
+        dados = [
+            {
+                'data': atendimento.data_atendimento.strftime('%d/%m/%Y %H:%M'),
+                'numero': atendimento.numero_atendimento,
+                'area': atendimento.area_juridica.nome,
+                'assunto': atendimento.assunto.titulo,
+                'status': atendimento.status,
+                'valor_causa': atendimento.valor_causa,
+                'numero_processo': atendimento.numero_processo,
+                'anotacoes': atendimento.anotacoes,
+                'cliente': atendimento.cliente.first_name
+            }
+            for atendimento in atendimentos
+        ]
+        return Response(dados)
 
 
 
