@@ -33,6 +33,8 @@ urlpatterns = [
     path('api/', include('atendimentos.urls')),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/advogados/', include('advogados.urls')),
+
 
     # URLs do Swagger
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='swagger-ui'),

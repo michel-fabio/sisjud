@@ -4,8 +4,9 @@ import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import { Dropdown } from 'primereact/dropdown';
-import { Toast } from 'primereact/toast';
+import Swal from 'sweetalert2';
 import { useRef } from 'react';
+import api from "../services/api";
 
 
 function AdvogadosAfiliados() {
@@ -14,6 +15,8 @@ function AdvogadosAfiliados() {
   const [oab, setOab] = useState('');
   const [areas, setAreas] = useState(['']);
   const toast = useRef(null);
+  const [email, setEmail] = useState('');
+
 
   const adicionarArea = () => {
     setAreas([...areas, '']);
@@ -43,6 +46,7 @@ function AdvogadosAfiliados() {
     setNome('');
     setOab('');
     setAreas(['']);
+    setEmail('');
   };
 
   const removerArea = (index) => {
@@ -51,23 +55,54 @@ function AdvogadosAfiliados() {
     setAreas(novas.length === 0 ? [''] : novas);
   };
 
-  const handleCadastro = () => {
-    if (!nome || !oab || areas.some((a) => !a)) {
-      toast.current.show({
-        severity: 'warn',
-        summary: 'Atenção',
-        detail: 'Por favor, preencha todos os campos antes de confirmar.',
-        life: 3000,
+  const gerarSenha = () => {
+    const letras = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    return Array.from({ length: 10 }, () => letras[Math.floor(Math.random() * letras.length)]).join("");
+  };
+  
+  const handleCadastro = async () => {
+    if (!nome || !email || !oab || areas.some((a) => !a)) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Campos obrigatórios',
+        text: 'Por favor, preencha todos os campos antes de confirmar.',
+        confirmButtonColor: '#0097b2',
       });
       return;
     }
   
-    console.log({ nome, oab, areas });
+    const senha = gerarSenha();
   
-    // Limpa e fecha
-    limparFormulario();
-    setVisible(false);
+    try {
+      await api.post("advogados/cadastrar/", {
+        nome,
+        email,
+        senha,
+        numero_oab: oab,
+        areas_atuacao: areas.join(", "),
+      });
+    
+      // Fechar e limpar antes do alerta
+      setVisible(false);
+      limparFormulario();
+    
+      await Swal.fire({
+        icon: 'success',
+        title: 'Cadastro realizado',
+        text: 'O advogado foi cadastrado com sucesso.',
+        confirmButtonColor: '#0097b2',
+      });
+    } catch (error) {
+      console.error("Erro ao cadastrar advogado:", error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Erro',
+        text: 'Falha ao cadastrar o advogado. Verifique os dados.',
+        confirmButtonColor: '#0097b2',
+      });
+    }
   };
+  
 
   const modalFooter = (
     <div style={{ padding: '1rem', textAlign: 'center' }}>
@@ -133,8 +168,6 @@ function AdvogadosAfiliados() {
           </tbody>
         </table>
 
-        <Toast ref={toast} />
-
         {/* Modal */}
         <Dialog
             header="CADASTRAR ADVOGADO"
@@ -158,6 +191,20 @@ function AdvogadosAfiliados() {
                 </span>
                 <InputText placeholder="Nome Completo" value={nome} onChange={(e) => setNome(e.target.value)} className="w-full" />
             </div>
+
+            {/* Email */}
+            <div className="p-inputgroup mb-3">
+              <span className="p-inputgroup-addon">
+                <i className="pi pi-envelope" />
+              </span>
+              <InputText
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full"
+              />
+            </div>
+
 
             {/* OAB */}
             <div className="p-inputgroup mb-3">

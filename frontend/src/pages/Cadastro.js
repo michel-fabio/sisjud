@@ -6,7 +6,7 @@ import { Button } from "primereact/button";
 import { Card } from "primereact/card";
 import { Divider } from "primereact/divider";
 import { Link } from "react-router-dom";
-import { Toast } from "primereact/toast"; // Importa o Toast
+import { Toast } from "primereact/toast";
 
 function Register() {
   const [nome, setNome] = useState("");
@@ -14,7 +14,7 @@ function Register() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const navigate = useNavigate();
-  const toast = useRef(null); // Referência para o Toast
+  const toast = useRef(null);
 
   const handleRegister = async (e) => {
     e.preventDefault();
