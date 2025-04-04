@@ -72,7 +72,7 @@ function Login() {
         label="Área do Advogado" 
         icon="pi pi-user" 
         className="absolute top-0 right-0 m-3 p-button-outlined"
-        onClick={() => navigate("/advogado")}
+        onClick={() => navigate("/login-advogado")}
       />
 
       <Card className="p-4 shadow-2 border-round-lg w-3">
@@ -125,7 +125,7 @@ function Login() {
 
           {/* Centralizando o texto do cadastro */}
           <p className="text-600 text-center">
-            ou faça seu cadastro <Link to="/register" className="font-bold">aqui</Link>
+            ou faça seu cadastro <Link to="/cadastro" className="font-bold">aqui</Link>
           </p>
         </form>
       </Card>

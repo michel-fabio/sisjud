@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import SideBarAdministrador from '../components/SideBarAdministrador';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';

@@ -4,8 +4,9 @@ from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth import get_user_model
-from rest_framework_simplejwt.tokens import RefreshToken
-from .serializers import UsuarioSerializer
+from .serializers import UsuarioSerializer, CustomTokenObtainPairSerializer
+from rest_framework_simplejwt.views import TokenObtainPairView
+
 from usuarios.models import Usuario
 
 class CadastroCliente(APIView):
@@ -53,3 +54,6 @@ class ListarClientesAPIView(ListAPIView):
 
     def get_queryset(self):
         return Usuario.objects.filter(tipo='cliente')
+    
+class CustomLoginView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer

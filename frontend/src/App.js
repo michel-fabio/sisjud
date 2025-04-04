@@ -6,7 +6,6 @@ import 'primeicons/primeicons.css';
 import Login from "./pages/Login";
 import LoginAdvogado from "./pages/LoginAdvogado";
 import Cadastro from "./pages/Cadastro";
-import Dashboard from "./pages/Dashboard";
 import SolicitarAtendimento from "./pages/SolicitarAtendimento";
 import CancelarAtendimento from "./pages/CancelarAtendimento";
 import InicioCliente from "./pages/InicioCliente";
@@ -15,8 +14,8 @@ import AdvogadosAfiliados from "./pages/AdvogadosAfiliados";
 import ListarClientes from "./pages/ListarClientes";
 import InicioAdvogado from "./pages/InicioAdvogado";
 import AtendimentosHoje from "./pages/AtendimentosHoje";
-import AtendimentosRealizados from "./pages/AtendimentosRealizados";
 import Atendimento from "./pages/Atendimento";
+import AtendimentosRealizados from "./pages/AtendimentosRealizados";
 import PrivateRoute from "./components/PrivateRoute";
 import './App.css';
 
@@ -27,23 +26,27 @@ function AppContent() {
     <>
       <Routes>
         <Route path="/" element={<Login />} />
-        <Route path="/register" element={<Cadastro />} />
-        <Route path="/advogado" element={<LoginAdvogado />} />
-        <Route path="/inicio-cliente" element={<InicioCliente />} />
-        <Route path="/solicitar-atendimento" element={<SolicitarAtendimento />} />
-        <Route path="/cancelar-atendimento" element={<CancelarAtendimento />} />
-        <Route path="/inicio-administrador" element={<InicioAdministrador />} />
-        <Route path="/advogados-afiliados" element={<AdvogadosAfiliados />} />
-        <Route path="/listar-clientes" element={<ListarClientes />} />
-        <Route path="/inicio-advogado" element={<InicioAdvogado />} />
-        <Route path="/atendimentos-hoje" element={<AtendimentosHoje />} />
-        <Route path="/atendimentos-realizados" element={<AtendimentosRealizados />} />
-        <Route path="/atendimento" element={<Atendimento />} />
+        <Route path="/cadastro" element={<Cadastro />} />
+        <Route path="/login-advogado" element={<LoginAdvogado />} />
 
-        <Route element={<PrivateRoute />}>
-          <Route path="/dashboard" element={<Dashboard />} />
+        <Route element={<PrivateRoute allowedRoles={['cliente']} />}>
+          <Route path="/inicio-cliente" element={<InicioCliente />} />
+          <Route path="/solicitar-atendimento" element={<SolicitarAtendimento />} />
+          <Route path="/cancelar-atendimento" element={<CancelarAtendimento />} />
         </Route>
 
+        <Route element={<PrivateRoute allowedRoles={['advogado']} />}>
+          <Route path="/inicio-advogado" element={<InicioAdvogado />} />
+          <Route path="/atendimento" element={<Atendimento />} />
+          <Route path="/atendimentos-hoje" element={<AtendimentosHoje />} />
+          <Route path="/atendimentos-realizados" element={<AtendimentosRealizados />} />
+        </Route>
+
+        <Route element={<PrivateRoute allowedRoles={['admin']} />}>
+          <Route path="/inicio-administrador" element={<InicioAdministrador />} />
+          <Route path="/advogados-afiliados" element={<AdvogadosAfiliados />} />
+          <Route path="/listar-clientes" element={<ListarClientes />} />
+        </Route>
       </Routes>
     </>
   );
