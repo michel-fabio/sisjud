@@ -1,14 +1,19 @@
-from django.shortcuts import render
+from django.contrib.auth import get_user_model
+from django.db import models
 from rest_framework import viewsets, status
-from rest_framework.decorators import action
+from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .models import Atendimento, AreaJuridica, Assunto, MotivoCancelamento
+from advogados.models import Advogado
 from .serializers import AtendimentoSerializer, AreaJuridicaSerializer, AssuntoSerializer, AtendimentoPendenteSerializer, MotivoCancelamentoSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status as drf_status
 from datetime import datetime
 from django.utils.timezone import now
+
+
+
 
 class AtendimentoViewSet(viewsets.ModelViewSet):
     queryset = Atendimento.objects.all()
@@ -33,7 +38,7 @@ class AtendimentoViewSet(viewsets.ModelViewSet):
         data_atendimento = self.request.data.get('data_atendimento')
         
         if not data_atendimento:
-            raise serializers.ValidationError("Data do atendimento é obrigatória.")
+            return Response({'erro': 'Data do atendimento é obrigatória.'}, status=400)
 
         # Converte string ISO para datetime
         data_obj = datetime.fromisoformat(data_atendimento)
@@ -166,6 +171,38 @@ class AtendimentoViewSet(viewsets.ModelViewSet):
             for atendimento in atendimentos
         ]
         return Response(dados)
+    
+    @action(detail=False, methods=['get'], url_path='dashboard-admin')
+    def dashboard_admin(self, request):
+        hoje = now()
+        mes_atual = hoje.month
+        ano_atual = hoje.year
+
+        atendimentos = Atendimento.objects.all()
+        finalizados = atendimentos.filter(status__startswith='finalizado')
+
+        total_mes = atendimentos.filter(
+            data_atendimento__month=mes_atual,
+            data_atendimento__year=ano_atual
+        ).count()
+
+        em_andamento = atendimentos.filter(status='em_andamento').count()
+        causas_ganhas = finalizados.filter(status='finalizado_causa_ganha').count()
+
+        honorarios = finalizados.aggregate(models.Sum('valor_causa'))['valor_causa__sum'] or 0
+
+        Usuario = get_user_model()
+        clientes = Usuario.objects.filter(tipo='cliente').count()
+        advogados = Advogado.objects.count()
+
+        return Response({
+            'total_mes': total_mes,
+            'em_andamento': em_andamento,
+            'causas_ganhas': causas_ganhas,
+            'honorarios': honorarios,
+            'clientes': clientes,
+            'advogados': advogados
+        })
 
 
 

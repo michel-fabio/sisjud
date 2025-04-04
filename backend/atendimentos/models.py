@@ -18,9 +18,31 @@ class Assunto(models.Model):
 
 class Atendimento(models.Model):
     STATUS_CHOICES = [
-        ('pendente', 'Aguardando Atendimento'),
+        # Etapas iniciais
+        ('pendente', 'Agendamento marcado, aguardando atendimento'),
+        ('em_analise', 'Em Análise Inicial'),
+        ('aguardando_documentos', 'Aguardando Documentos'),
+        ('rejeitado', 'Rejeitado pelo Escritório'),
+        
+        # Atendimento em curso
         ('em_andamento', 'Em Atendimento'),
-        ('finalizado', 'Finalizado'),
+        ('aguardando_retorno_cliente', 'Aguardando Retorno do Cliente'),
+        ('em_negociacao', 'Em Negociação/Conciliação'),
+
+        # Etapas judiciais / tribunal
+        ('aguardando_distribuicao', 'Aguardando Distribuição'),
+        ('aguardando_audiencia', 'Aguardando Audiência'),
+        ('aguardando_sentenca', 'Aguardando Sentença'),
+        ('sentenca_proferida', 'Sentença Proferida'),
+        ('em_recurso', 'Em Fase Recursal'),
+        ('aguardando_transito_em_julgado', 'Aguardando Trânsito em Julgado'),
+        ('aguardando_cumprimento_sentenca', 'Aguardando Cumprimento de Sentença'),
+
+        # Finalizações
+        ('finalizado_causa_ganha', 'Finalizado com Causa Ganha'),
+        ('finalizado_sem_causa_ganha', 'Finalizado sem Causa Ganha'),
+        ('finalizado_acordo', 'Finalizado com Acordo'),
+        ('encerrado_por_inatividade', 'Encerrado por Inatividade'),
         ('cancelado', 'Cancelado'),
     ]
 
@@ -32,7 +54,7 @@ class Atendimento(models.Model):
     data_atendimento = models.DateTimeField()
     valor_causa = models.DecimalField(max_digits=10, decimal_places=2)
     numero_processo = models.CharField(max_length=25, blank=True, null=True)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pendente')
+    status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='pendente')
     anotacoes = models.TextField(blank=True, null=True)
 
     def __str__(self):

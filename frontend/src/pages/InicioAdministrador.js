@@ -1,14 +1,6 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import api from '../services/api';
 import SideBarAdministrador from '../components/SideBarAdministrador';
-
-const cardsData = [
-  { title: 'Atendimentos Realizados no Mês', value: 150, color: 'linear-gradient(to right, #5de0e6, #004aad)' },
-  { title: 'Atendimentos com processos em andamento', value: 81, color: 'linear-gradient(to right, #ff3131, #ff914d)' },
-  { title: 'Advogados Afiliados', value: 8, color: 'linear-gradient(to right, #8c52ff, #5ce1e6)' },
-  { title: 'Clientes Cadastrados', value: 520, color: 'linear-gradient(to right, #ff66c4, #ffde59)' },
-  { title: 'Causas Ganhas', value: 324, color: 'linear-gradient(to right, #0097b2, #7ed957)' },
-  { title: 'Valor em Honorários', value: 'R$ 231.056,21', color: 'linear-gradient(to right, #000000, #c89116)' },
-];
 
 const cardStyle = {
   color: 'white',
@@ -30,14 +22,45 @@ const gridContainerStyle = {
 };
 
 function InicioAdministrador() {
+  const [dados, setDados] = useState(null);
+
+  useEffect(() => {
+    const carregarDados = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await api.get('atendimentos/dashboard-admin/', {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+
+        setDados(response.data);
+      } catch (err) {
+        console.error('Erro ao buscar dados do dashboard:', err);
+      }
+    };
+
+    carregarDados();
+  }, []);
+
+  if (!dados) return <div>Carregando...</div>;
+
+  const cardsData = [
+    { title: 'Atendimentos Realizados no Mês', value: dados.total_mes, color: 'linear-gradient(to right, #5de0e6, #004aad)' },
+    { title: 'Atendimentos com processos em andamento', value: dados.em_andamento, color: 'linear-gradient(to right, #ff3131, #ff914d)' },
+    { title: 'Advogados Afiliados', value: dados.advogados, color: 'linear-gradient(to right, #8c52ff, #5ce1e6)' },
+    { title: 'Clientes Cadastrados', value: dados.clientes, color: 'linear-gradient(to right, #ff66c4, #ffde59)' },
+    { title: 'Causas Ganhas', value: dados.causas_ganhas, color: 'linear-gradient(to right, #0097b2, #7ed957)' },
+    { title: 'Valor em Honorários', value: `R$ ${dados.honorarios.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`, color: 'linear-gradient(to right, #000000, #c89116)' },
+  ];
+
   return (
     <div style={{ display: 'flex' }}>
       <SideBarAdministrador />
-      
-        {/* Ícone no canto superior direito */}
-        <div style={{ position: 'absolute', top: '10px', right: '20px', zIndex: 1 }}>
-            <img src="./logo.png" alt="Ícone do Sistema" style={{ width: '40px', height: '40px' }} />
-        </div>
+
+      <div style={{ position: 'absolute', top: '10px', right: '20px', zIndex: 1 }}>
+        <img src="./logo.png" alt="Ícone do Sistema" style={{ width: '40px', height: '40px' }} />
+      </div>
 
       <div style={{ flex: 1, padding: '2rem' }}>
         <div style={gridContainerStyle}>
