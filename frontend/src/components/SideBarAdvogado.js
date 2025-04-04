@@ -19,7 +19,7 @@ const SideBarAdvogado = () => {
       command: () => {
         localStorage.removeItem("token");
         localStorage.removeItem("nome_usuario");
-        navigate('/advogado');
+        navigate('/login-advogado');
       },
     },
   ];

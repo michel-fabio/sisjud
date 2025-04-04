@@ -54,8 +54,17 @@ function InicioAdvogado() {
           return data.getMonth() === mesAtual && data.getFullYear() === anoAtual;
         }).length;
 
+        const statusFinalizados = [
+          'rejeitado',
+          'finalizado_causa_ganha',
+          'finalizado_sem_causa_ganha',
+          'finalizado_acordo',
+          'encerrado_por_inatividade',
+          'cancelado',
+        ];
+        
         const emAndamento = atendimentos.filter(at => 
-          at.status === 'em_andamento'
+          at.numero_processo && !statusFinalizados.includes(at.status)
         ).length;
 
         const causasGanhas = atendimentos.filter(at =>
