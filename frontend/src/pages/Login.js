@@ -25,6 +25,7 @@ function Login() {
   
       const token = response.data.access;
       const token_decodificado = jwtDecode(token);
+      console.log(token_decodificado)
   
       localStorage.setItem("token", token);
   
