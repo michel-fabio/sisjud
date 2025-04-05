@@ -208,6 +208,7 @@ class AtendimentoViewSet(viewsets.ModelViewSet):
 class AreaJuridicaViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = AreaJuridica.objects.all()
     serializer_class = AreaJuridicaSerializer
+    permission_classes = [IsAuthenticated]
 
 class AssuntoViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Assunto.objects.all()

@@ -18,9 +18,7 @@ const CancelarAtendimento = () => {
     useEffect(() => {
         const fetchAtendimentos = async () => {
             try {
-                const token = localStorage.getItem('token');
-                api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-                const response = await api.get('atendimentos/pendentes/');
+                const response = await api.get('atendimentos/atendimentos/pendentes/');
                 setAtendimentos(response.data);
             } catch (err) {
                 console.error("Erro ao carregar atendimentos pendentes", err);
@@ -29,7 +27,7 @@ const CancelarAtendimento = () => {
 
         const fetchMotivos = async () => {
             try {
-                const response = await api.get('motivos-cancelamento/');
+                const response = await api.get('atendimentos/motivos-cancelamento/');
                 const options = response.data.map(motivo => ({
                     label: motivo.descricao,
                     value: motivo.descricao
@@ -56,10 +54,8 @@ const CancelarAtendimento = () => {
         }
 
         try {
-            const token = localStorage.getItem('token');
-            api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
-            await api.post(`atendimentos/${atendimentoSelecionado}/cancelar/`, {
+            await api.post(`atendimentos/atendimentos/${atendimentoSelecionado}/cancelar/`, {
                 motivo,
                 observacoes
             });

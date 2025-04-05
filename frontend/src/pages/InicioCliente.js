@@ -50,12 +50,8 @@ const InicioCliente = () => {
   useEffect(() => {
     const fetchAtendimentos = async () => {
       try {
-        const token = localStorage.getItem('token');
-        const response = await api.get('atendimentos/', {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        });
+        const response = await api.get("atendimentos/atendimentos/");
+
         setAtendimentos(response.data);
       } catch (error) {
         console.error('Erro ao carregar atendimentos:', error);

@@ -30,7 +30,7 @@ const SolicitarAtendimento = () => {
   useEffect(() => {
     const fetchAreas = async () => {
       try {
-        const response = await api.get("areas/");
+        const response = await api.get("atendimentos/areas/");
         const options = response.data.map(area => ({
           label: area.nome,
           value: area.id,
@@ -48,7 +48,7 @@ const SolicitarAtendimento = () => {
     if (areaSelecionada) {
       const fetchAssuntos = async () => {
         try {
-          const response = await api.get("assuntos/", {
+          const response = await api.get("atendimentos/assuntos/", {
             params: { area: areaSelecionada },
           });
           const options = response.data.map(assunto => ({
@@ -79,11 +79,8 @@ const SolicitarAtendimento = () => {
       return;
     }
   
-    try {
-      const token = localStorage.getItem("token");
-      api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-  
-      await api.post("atendimentos/", {
+    try {  
+      await api.post("atendimentos/atendimentos/", {
         area_juridica: areaSelecionada,
         assunto: assuntoSelecionado,
         data_atendimento: data.toISOString(),

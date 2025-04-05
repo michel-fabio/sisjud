@@ -29,8 +29,6 @@ function Login() {
   
       localStorage.setItem("token", token);
   
-      api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-  
       setTimeout(() => {
         if (token_decodificado.tipo === "cliente") {
           navigate("/inicio-cliente", {
