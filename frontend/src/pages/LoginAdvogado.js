@@ -5,6 +5,7 @@ import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { Card } from "primereact/card";
 import { Toast } from "primereact/toast";
+import { jwtDecode } from "jwt-decode";
 
 function LoginAdvogado() {
   const [email, setEmail] = useState("");
@@ -19,42 +20,39 @@ function LoginAdvogado() {
         username: email,
         password,
       });
-
+  
       const token = response.data.access;
+      const token_decodificado = jwtDecode(token);
+  
       localStorage.setItem("token", token);
+  
       api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
   
-      const userResponse = await api.get("usuario-logado/");
-      const { tipo } = userResponse.data;
-      localStorage.setItem("nome_usuario", userResponse.data.first_name || userResponse.data.username);
-  
-      setTimeout(() => {
-        if (tipo === "admin") {
-          toast.current.show({
-            severity: "success",
-            summary: "Sucesso",
-            detail: "Login realizado com sucesso!",
-            life: 1500,
-          });
-          navigate("/inicio-administrador");
-        } else if (tipo === "advogado") {
-          toast.current.show({
-            severity: "success",
-            summary: "Sucesso",
-            detail: "Login realizado com sucesso!",
-            life: 1500,
-          });
-          navigate("/inicio-advogado");
-        } else {
-          toast.current.show({
-            severity: "warn",
-            summary: "Acesso não autorizado",
-            detail: "Seu tipo de usuário não tem acesso por esta tela.",
-            life: 3000,
-          });
-        }
-      }, 1000);
-  
+      if (token_decodificado.tipo === "admin") {
+        toast.current.show({
+          severity: "success",
+          summary: "Sucesso",
+          detail: "Login realizado com sucesso!",
+          life: 1500,
+        });
+        navigate("/inicio-administrador");
+      } else if (token_decodificado.tipo === "advogado") {
+        toast.current.show({
+          severity: "success",
+          summary: "Sucesso",
+          detail: "Login realizado com sucesso!",
+          life: 1500,
+        });
+        navigate("/inicio-advogado");
+      } else {
+        localStorage.removeItem("token");
+        toast.current.show({
+          severity: "warn",
+          summary: "Acesso não autorizado",
+          detail: "Seu tipo de usuário não tem acesso por esta tela.",
+          life: 3000,
+        });
+      }
     } catch (error) {
       toast.current.show({
         severity: "error",

@@ -6,61 +6,58 @@ import { Button } from "primereact/button";
 import { Card } from "primereact/card";
 import { Divider } from "primereact/divider";
 import { Link } from "react-router-dom";
-import { Toast } from "primereact/toast"; // Importando o Toast
+import { Toast } from "primereact/toast";
+import { jwtDecode } from "jwt-decode";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-  const toast = useRef(null); // Criando a referência para o Toast
+  const toast = useRef(null);
 
   const handleLogin = async (e) => {
-      e.preventDefault();
-      try {
-        const response = await api.post("token/", {
-          username: email,
-          password,
-        });
-    
-        const token = response.data.access;
-        localStorage.setItem("token", token);
-        localStorage.setItem("nome_usuario", response.data.first_name || response.data.username);
-    
-        // Configura o token no header para a próxima chamada
-        api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-    
-        // Buscar os dados do usuário logado
-        const userResponse = await api.get("usuario-logado/");
-        const { tipo } = userResponse.data;
-        localStorage.setItem("nome_usuario", userResponse.data.first_name || userResponse.data.username);
-    
-        toast.current.show({
-          severity: "success",
-          summary: "Sucesso",
-          detail: "Login realizado com sucesso!",
-          life: 3000,
-        });
-    
-        setTimeout(() => {
-          if (tipo === "cliente") {
-            navigate("/inicio-cliente");
-          } else {
-            toast.current.show({
-              severity: "warn",
-              summary: "Acesso Indevido",
-              detail: "Este login é exclusivo para clientes.",
-              life: 4000,
-            });
-          }
-        }, 1000);
-      } catch (error) {
-        toast.current.show({
-          severity: "error",
-          summary: "Erro",
-          detail: "Erro ao fazer login. Verifique suas credenciais.",
-          life: 3000,
-        });
-      }
+    e.preventDefault();
+    try {
+      const response = await api.post("token/", {
+        username: email,
+        password,
+      });
+  
+      const token = response.data.access;
+      const token_decodificado = jwtDecode(token);
+  
+      localStorage.setItem("token", token);
+  
+      api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+  
+      toast.current.show({
+        severity: "success",
+        summary: "Sucesso",
+        detail: "Login realizado com sucesso!",
+        life: 3000,
+      });
+  
+      setTimeout(() => {
+        if (token_decodificado.tipo === "cliente") {
+          navigate("/inicio-cliente");
+        } else {
+          localStorage.removeItem("token");
+          toast.current.show({
+            severity: "warn",
+            summary: "Acesso Indevido",
+            detail: "Este login é exclusivo para clientes.",
+            life: 4000,
+          });
+        }
+      }, 1000);
+    } catch (error) {
+      toast.current.show({
+        severity: "error",
+        summary: "Erro",
+        detail: "Erro ao fazer login. Verifique suas credenciais.",
+        life: 3000,
+      });
+    }
   };
 
   return (

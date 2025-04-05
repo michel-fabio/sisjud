@@ -29,5 +29,6 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
         token = super().get_token(user)
-        token['tipo'] = user.tipo  # Adiciona o tipo ao payload
+        token['tipo'] = user.tipo
+        token['nome'] = user.first_name
         return token

@@ -1,10 +1,11 @@
 import React from 'react';
 import { Menu } from 'primereact/menu';
 import { useNavigate } from 'react-router-dom';
+import { jwtDecode } from "jwt-decode";
 
 const SideBarAdministrador = () => {
   const navigate = useNavigate();
-  const nome = localStorage.getItem("nome_usuario") || "Usuário";
+  const token_decodificado = jwtDecode(localStorage.getItem("token"));
 
   const items = [
     { label: 'Início', icon: 'pi pi-home', command: () => navigate('/inicio-administrador') },
@@ -36,7 +37,7 @@ const SideBarAdministrador = () => {
     }}>
       <div style={{ textAlign: 'center', marginBottom: '20px', color: 'white' }}>
         <img src="https://www.w3schools.com/howto/img_avatar.png" alt="Avatar" style={{ width: '60px', borderRadius: '50%' }} />
-        <h3 style={{ marginTop: '10px', fontSize: '16px' }}>{nome}</h3>
+        <h3 style={{ marginTop: '10px', fontSize: '16px' }}>{token_decodificado.nome}</h3>
       </div>
 
       <div style={{ flex: 1, width: '100%' }}>
