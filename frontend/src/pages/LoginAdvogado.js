@@ -29,21 +29,13 @@ function LoginAdvogado() {
       api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
   
       if (token_decodificado.tipo === "admin") {
-        toast.current.show({
-          severity: "success",
-          summary: "Sucesso",
-          detail: "Login realizado com sucesso!",
-          life: 1500,
-        });
-        navigate("/inicio-administrador");
+          navigate("/inicio-administrador", {
+            state: { showToast: true },
+          });
       } else if (token_decodificado.tipo === "advogado") {
-        toast.current.show({
-          severity: "success",
-          summary: "Sucesso",
-          detail: "Login realizado com sucesso!",
-          life: 1500,
-        });
-        navigate("/inicio-advogado");
+          navigate("/inicio-advogado", {
+            state: { showToast: true },
+          });
       } else {
         localStorage.removeItem("token");
         toast.current.show({

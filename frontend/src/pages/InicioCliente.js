@@ -1,4 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
+import { Toast } from 'primereact/toast';
 import api from '../services/api'; 
 import SideBarCliente from '../components/SideBarCliente';
 
@@ -28,6 +30,22 @@ const AtendimentoCard = ({ atendimento }) => {
 
 const InicioCliente = () => {
   const [atendimentos, setAtendimentos] = useState([]);
+  const location = useLocation();
+  const toast = useRef(null);
+
+  useEffect(() => {
+    if (location.state?.showToast) {
+      toast.current?.show({
+        severity: "success",
+        summary: "Sucesso",
+        detail: "Login realizado com sucesso!",
+        life: 1500,
+      });
+  
+      // Limpa o estado da navegação para evitar que o toast apareça de novo
+      window.history.replaceState({}, document.title);
+    }
+  }, [location]);
 
   useEffect(() => {
     const fetchAtendimentos = async () => {
@@ -49,6 +67,7 @@ const InicioCliente = () => {
 
   return (
     <div style={{ display: 'flex', height: '100vh', overflow: 'hidden', position: 'relative' }}>
+      <Toast ref={toast} />
       <SideBarCliente />
       <div style={{ flex: 1, padding: '20px', display: 'flex', flexDirection: 'column', height: '100vh' }}>
         <div style={{ position: 'absolute', top: '10px', right: '20px' }}>

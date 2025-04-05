@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react';
 import api from '../services/api';
 import SideBarAdvogado from '../components/SideBarAdvogado';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
+import { useLocation } from "react-router-dom";
+import { Toast } from "primereact/toast";
+import { useRef } from "react";
 
 const cardStyle = {
   color: 'white',
@@ -31,6 +34,22 @@ function InicioAdvogado() {
 
   const [assuntosFrequentes, setAssuntosFrequentes] = useState([]);
 
+  const location = useLocation();
+  const toast = useRef(null);
+
+  useEffect(() => {
+    if (location.state?.showToast) {
+      toast.current?.show({
+        severity: "success",
+        summary: "Sucesso",
+        detail: "Login realizado com sucesso!",
+        life: 1500,
+      });
+
+      window.history.replaceState({}, document.title);
+    }
+  }, [location]);
+
   useEffect(() => {
     const fetchDados = async () => {
       try {
@@ -40,8 +59,6 @@ function InicioAdvogado() {
             Authorization: `Bearer ${token}`,
           },
         });
-
-        console.log(response.data);
 
         const atendimentos = response.data;
 
@@ -107,6 +124,7 @@ function InicioAdvogado() {
 
   return (
     <div style={{ display: 'flex' }}>
+      <Toast ref={toast} />
       <SideBarAdvogado />
 
       <div style={{ position: 'absolute', top: '10px', right: '20px', zIndex: 1 }}>

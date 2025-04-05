@@ -30,26 +30,21 @@ function Login() {
   
       api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
   
-      toast.current.show({
-        severity: "success",
-        summary: "Sucesso",
-        detail: "Login realizado com sucesso!",
-        life: 3000,
-      });
-  
       setTimeout(() => {
         if (token_decodificado.tipo === "cliente") {
-          navigate("/inicio-cliente");
+          navigate("/inicio-cliente", {
+            state: { showToast: true },
+          });
         } else {
           localStorage.removeItem("token");
           toast.current.show({
             severity: "warn",
             summary: "Acesso Indevido",
             detail: "Este login é exclusivo para clientes.",
-            life: 4000,
+            life: 3000,
           });
         }
-      }, 1000);
+      }, 200);
     } catch (error) {
       toast.current.show({
         severity: "error",
