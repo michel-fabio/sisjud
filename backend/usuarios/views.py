@@ -3,7 +3,6 @@ from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework import status
-from django.contrib.auth import get_user_model
 from .serializers import UsuarioSerializer, CustomTokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 
@@ -30,27 +29,10 @@ class UsuarioLogado(APIView):
     def get(self, request):
         serializer = UsuarioSerializer(request.user)
         return Response(serializer.data)
-    
-class LoginAdvogadoView(APIView):
-    def post(self, request):
-        email = request.data.get('email')
-        password = request.data.get('password')
-
-        try:
-            usuario = Usuario.objects.get(email=email)
-        except Usuario.DoesNotExist:
-            return Response({'detail': 'Usuário não encontrado.'}, status=status.HTTP_401_UNAUTHORIZED)
-
-        if usuario.tipo not in ['advogado', 'admin']:
-            return Response({'detail': 'Tipo de usuário não autorizado para esta área.'}, status=status.HTTP_403_FORBIDDEN)
-
-        UserModel = get_user_model()
-        user = UserModel.objects.get(email=email)
-        if not user.check_password(password):
-            return Response({'detail': 'Credenciais inválidas.'}, status=status.HTTP_401_UNAUTHORIZED)
-        
+      
 class ListarClientesAPIView(ListAPIView):
     serializer_class = UsuarioSerializer
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         return Usuario.objects.filter(tipo='cliente')
