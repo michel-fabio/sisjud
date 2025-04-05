@@ -29,24 +29,28 @@ function Register() {
     }
 
     try {
-      await api.post("register/", { nome, email, password }, { headers: { Authorization: "" } });
+      await api.post("usuarios/register/", {
+        nome,
+        email,
+        password,
+      });
 
       const result = await Swal.fire({
         icon: "success",
         title: "Cadastro realizado com sucesso!",
-        text: "Clique em OK para ir ao login.",
         confirmButtonText: "OK",
         confirmButtonColor: "#0097b2",
       });
-      
+
       if (result.isConfirmed) {
         navigate("/");
       }
     } catch (error) {
+      console.error("Erro ao cadastrar:", error.response?.data || error.message);
       Swal.fire({
         icon: "error",
         title: "Erro",
-        text: "Erro ao cadastrar. Tente novamente.",
+        text: error.response?.data?.message || "Erro ao cadastrar. Tente novamente.",
         confirmButtonColor: "#0097b2",
       });
     }

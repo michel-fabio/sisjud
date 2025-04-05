@@ -13,7 +13,7 @@ function ListarClientes() {
 
   const fetchClientes = async () => {
     try {
-      const response = await api.get('clientes/');
+      const response = await api.get('usuarios/clientes/');
       setClientes(response.data);
     } catch (error) {
       console.error('Erro ao buscar clientes:', error);
