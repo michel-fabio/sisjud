@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import { InputText } from "primereact/inputtext";
@@ -6,7 +6,7 @@ import { Button } from "primereact/button";
 import { Card } from "primereact/card";
 import { Divider } from "primereact/divider";
 import { Link } from "react-router-dom";
-import { Toast } from "primereact/toast";
+import Swal from "sweetalert2";
 
 function Register() {
   const [nome, setNome] = useState("");
@@ -14,32 +14,46 @@ function Register() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const navigate = useNavigate();
-  const toast = useRef(null);
 
   const handleRegister = async (e) => {
     e.preventDefault();
 
     if (password !== confirmPassword) {
-      toast.current.show({ severity: "warn", summary: "Atenção", detail: "As senhas não coincidem.", life: 3000 });
+      Swal.fire({
+        icon: "warning",
+        title: "Atenção",
+        text: "As senhas não coincidem.",
+        confirmButtonColor: "#0097b2",
+      });
       return;
     }
 
     try {
       await api.post("register/", { nome, email, password }, { headers: { Authorization: "" } });
-      toast.current.show({ severity: "success", summary: "Sucesso", detail: "Cadastro realizado com sucesso!", life: 3000 });
 
-      setTimeout(() => {
+      const result = await Swal.fire({
+        icon: "success",
+        title: "Cadastro realizado com sucesso!",
+        text: "Clique em OK para ir ao login.",
+        confirmButtonText: "OK",
+        confirmButtonColor: "#0097b2",
+      });
+      
+      if (result.isConfirmed) {
         navigate("/");
-      }, 2000); // Redireciona após 2 segundos
+      }
     } catch (error) {
-      toast.current.show({ severity: "error", summary: "Erro", detail: "Erro ao cadastrar. Tente novamente.", life: 3000 });
+      Swal.fire({
+        icon: "error",
+        title: "Erro",
+        text: "Erro ao cadastrar. Tente novamente.",
+        confirmButtonColor: "#0097b2",
+      });
     }
   };
 
   return (
     <div className="flex align-items-center justify-content-center min-h-screen bg-gray-100">
-      <Toast ref={toast} /> {/* Componente Toast para exibir mensagens */}
-
       <Card className="p-4 shadow-2 border-round-lg w-3">
         <div className="flex justify-content-center mb-3">
           <img src="/logo.png" alt="Logo" width="50" />
@@ -53,12 +67,11 @@ function Register() {
         </div>
 
         <form onSubmit={handleRegister} className="p-fluid">
-          {/* Nome Completo */}
           <div className="p-inputgroup mb-3">
             <span className="p-inputgroup-addon">
               <i className="pi pi-id-card"></i>
             </span>
-            <InputText 
+            <InputText
               placeholder="Nome Completo"
               value={nome}
               onChange={(e) => setNome(e.target.value)}
@@ -67,12 +80,11 @@ function Register() {
             />
           </div>
 
-          {/* Email */}
           <div className="p-inputgroup mb-3">
             <span className="p-inputgroup-addon">
               <i className="pi pi-user"></i>
             </span>
-            <InputText 
+            <InputText
               placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -81,12 +93,11 @@ function Register() {
             />
           </div>
 
-          {/* Senha */}
           <div className="p-inputgroup mb-3">
             <span className="p-inputgroup-addon">
               <i className="pi pi-lock"></i>
             </span>
-            <InputText 
+            <InputText
               type="password"
               placeholder="Senha"
               value={password}
@@ -96,12 +107,11 @@ function Register() {
             />
           </div>
 
-          {/* Repetir Senha */}
           <div className="p-inputgroup mb-3">
             <span className="p-inputgroup-addon">
               <i className="pi pi-lock"></i>
             </span>
-            <InputText 
+            <InputText
               type="password"
               placeholder="Repetir a Senha"
               value={confirmPassword}
