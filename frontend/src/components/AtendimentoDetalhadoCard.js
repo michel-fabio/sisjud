@@ -9,7 +9,6 @@ import { InputNumber } from 'primereact/inputnumber';
 
 
 const AtendimentoDetalhadoCard = ({ atendimento, onFinalizar, opcoesStatus}) => {
-    console.log(atendimento)
     const [mostrarModal, setMostrarModal] = useState(false);
     const [novoStatus, setNovoStatus] = useState(atendimento.status_display);
     const [statusAtual, setStatusAtual] = useState(atendimento.status_display);
