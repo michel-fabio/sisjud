@@ -25,7 +25,7 @@ function AdvogadosAfiliados() {
 
   const fetchAdvogados = async () => {
     try {
-      const response = await api.get("advogados/listar/");
+      const response = await api.get("advogados/");
       setAdvogados(response.data);
     } catch (error) {
       console.error("Erro ao buscar advogados:", error);
@@ -82,7 +82,7 @@ function AdvogadosAfiliados() {
     const senha = gerarSenha();
 
     try {
-      await api.post("advogados/cadastrar/", {
+      await api.post("advogados/", {
         nome,
         email,
         senha,
@@ -161,7 +161,6 @@ function AdvogadosAfiliados() {
           paginator
           rows={5}
           rowsPerPageOptions={[5, 10, 20]}
-          responsiveLayout="scroll"
           filterDisplay="row"
           stripedRows
           emptyMessage="Nenhum advogado encontrado."

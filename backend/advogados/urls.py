@@ -1,7 +1,10 @@
-from django.urls import path
-from .views import CadastroAdvogadoAPIView, ListarAdvogadosAPIView
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from .views import AdvogadoViewSet
+
+router = DefaultRouter()
+router.register(r'', AdvogadoViewSet, basename='advogado')  # 👈 sem prefixo aqui
 
 urlpatterns = [
-    path('cadastrar/', CadastroAdvogadoAPIView.as_view(), name='cadastrar-advogado'),
-    path('listar/', ListarAdvogadosAPIView.as_view(), name='listar-advogados'),
+    path('', include(router.urls)),  # 👈 include direto, sem prefixo adicional
 ]

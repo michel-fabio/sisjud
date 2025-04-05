@@ -1,19 +1,18 @@
-from rest_framework.views import APIView
-from rest_framework.generics import ListAPIView
+from rest_framework import viewsets, status
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework import status
 from .models import Advogado, Usuario
 from .serializers import AdvogadoSerializer
-from rest_framework.permissions import IsAuthenticated
-from rest_framework import status, permissions
 
-class CadastroAdvogadoAPIView(APIView):
-
+class AdvogadoViewSet(viewsets.ModelViewSet):
+    queryset = Advogado.objects.all()
+    serializer_class = AdvogadoSerializer
     permission_classes = [IsAuthenticated]
 
-    def post(self, request):
+    def create(self, request, *args, **kwargs):
         if request.user.tipo != 'admin':
             return Response({"erro": "Acesso não autorizado."}, status=status.HTTP_403_FORBIDDEN)
+
         nome = request.data.get("nome")
         email = request.data.get("email")
         senha = request.data.get("senha")
@@ -44,8 +43,3 @@ class CadastroAdvogadoAPIView(APIView):
             "mensagem": "Advogado cadastrado com sucesso.",
             "advogado_id": advogado.id
         }, status=status.HTTP_201_CREATED)
-    
-class ListarAdvogadosAPIView(ListAPIView):
-    permission_classes = [IsAuthenticated]
-    queryset = Advogado.objects.select_related('usuario').all()
-    serializer_class = AdvogadoSerializer
