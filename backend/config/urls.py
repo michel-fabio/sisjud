@@ -8,12 +8,10 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework.permissions import AllowAny
 
 from atendimentos.views import AtendimentoViewSet
-from processos.views import ProcessoViewSet
 
 # Criando o roteador da API
 router = DefaultRouter()
 router.register(r'atendimentos', AtendimentoViewSet)
-router.register(r'processos', ProcessoViewSet)
 
 # Configuração do Swagger
 schema_view = get_schema_view(
@@ -34,7 +32,6 @@ urlpatterns = [
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/advogados/', include('advogados.urls')),
-    path('api/processos/', include('processos.urls')),
 
     # URLs do Swagger
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='swagger-ui'),

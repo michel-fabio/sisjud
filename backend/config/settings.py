@@ -55,7 +55,6 @@ INSTALLED_APPS = [
     'usuarios',
     'atendimentos',
     'advogados',
-    'processos',
 
 ]
 
