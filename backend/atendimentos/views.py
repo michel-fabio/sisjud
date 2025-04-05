@@ -1,9 +1,8 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 from rest_framework import viewsets, status
-from rest_framework.decorators import action, api_view, permission_classes
+from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.views import APIView
 from .models import Atendimento, AreaJuridica, Assunto, MotivoCancelamento
 from advogados.models import Advogado
 from .serializers import AtendimentoSerializer, AreaJuridicaSerializer, AssuntoSerializer, AtendimentoPendenteSerializer, MotivoCancelamentoSerializer
@@ -135,7 +134,6 @@ class AtendimentoViewSet(viewsets.ModelViewSet):
             atendimento.status = request.data.get('status')
             atendimento.advogado = request.user.advogado
 
-            # Corrigido aqui
             atendimento.numero_processo = request.data.get('numero_processo', '')
             atendimento.valor_causa = request.data.get('valor_causa', None)
             atendimento.anotacoes = request.data.get('descricao', '')
@@ -222,8 +220,7 @@ class AssuntoViewSet(viewsets.ReadOnlyModelViewSet):
             queryset = queryset.filter(area_id=area_id)
         return queryset
     
-class MotivosCancelamentoView(APIView):
-    def get(self, request):
-        motivos = MotivoCancelamento.objects.all()
-        serializer = MotivoCancelamentoSerializer(motivos, many=True)
-        return Response(serializer.data)
+class MotivoCancelamentoViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = MotivoCancelamento.objects.all()
+    serializer_class = MotivoCancelamentoSerializer
+    permission_classes = [IsAuthenticated]
