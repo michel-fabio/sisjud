@@ -2,6 +2,7 @@ import React from 'react';
 import { Menu } from 'primereact/menu';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from "jwt-decode";
+import { logout } from '../services/auth.js';
 
 const SideBarAdministrador = () => {
   const navigate = useNavigate();
@@ -17,11 +18,7 @@ const SideBarAdministrador = () => {
     {
       label: 'Sair',
       icon: 'pi pi-sign-out',
-      command: () => {
-        localStorage.removeItem("token");
-        localStorage.removeItem("nome_usuario");
-        navigate('/login-advogado');
-      },
+      command: () => logout('/login-advogado')
     },
   ];
 

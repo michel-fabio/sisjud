@@ -1,6 +1,6 @@
 import React from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
-import { getUserRole } from '../utils/auth';
+import { getUserRole } from '../services/auth';
 
 const PrivateRoute = ({ allowedRoles }) => {
   const location = useLocation();
