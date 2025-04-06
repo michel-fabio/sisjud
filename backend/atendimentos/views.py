@@ -213,6 +213,7 @@ class AreaJuridicaViewSet(viewsets.ReadOnlyModelViewSet):
 class AssuntoViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Assunto.objects.all()
     serializer_class = AssuntoSerializer
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         queryset = super().get_queryset()

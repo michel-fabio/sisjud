@@ -34,7 +34,7 @@ function AdvogadosAfiliados() {
 
   const fetchAreas = async () => {
     try {
-      const response = await api.get("areas/");
+      const response = await api.get("atendimentos/areas/");
       const formatadas = response.data.map((area) => ({ label: area.nome, value: area.nome }));
       setOpcoesDeArea(formatadas);
     } catch (error) {

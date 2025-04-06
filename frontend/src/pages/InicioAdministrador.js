@@ -44,11 +44,7 @@ function InicioAdministrador() {
     const carregarDados = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await api.get('atendimentos/dashboard-admin/', {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        });
+        const response = await api.get('atendimentos/dashboard-admin/');
 
         setDados(response.data);
       } catch (err) {
