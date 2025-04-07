@@ -67,11 +67,13 @@ function LoginAdvogado() {
       />
       <Card className="p-4 shadow-2 border-round-lg w-3" style={{ backgroundColor: "white" }}>
         <div className="flex justify-content-center mb-3">
-          <img src="/logo.png" alt="Logo" width="50" />
+          <img src="/logo.png" alt="Logo" width="200" />
         </div>
 
         <div className="text-center">
-          <h2 className="text-900 mb-2">SISJUD</h2>
+          <p className="text-600 mb-4" style={{ textAlign: "center" }}>
+            Este login é exclusivo para <strong>advogados e administradores</strong>.
+          </p>
         </div>
 
         <form onSubmit={handleLogin} className="p-fluid">

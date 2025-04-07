@@ -70,7 +70,7 @@ const InicioCliente = () => {
           <img
             src="/logo.png"
             alt="Ícone do Sistema"
-            style={{ width: '40px', height: '40px' }}
+            style={{ width: '70px', height: '70px' }}
           />
         </div>
         <h2>Atendimentos Realizados</h2>

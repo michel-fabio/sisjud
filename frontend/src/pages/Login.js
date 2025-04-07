@@ -25,7 +25,6 @@ function Login() {
   
       const token = response.data.access;
       const token_decodificado = jwtDecode(token);
-      console.log(token_decodificado)
   
       localStorage.setItem("token", token);
   
@@ -69,14 +68,13 @@ function Login() {
       <Card className="p-4 shadow-2 border-round-lg w-3">
         {/* Centralizando a imagem */}
         <div className="flex justify-content-center mb-3">
-          <img src="/logo.png" alt="Logo" width="50" />
+          <img src="/logo.png" alt="Logo" width="200" />
         </div>
 
         {/* Centralizando o título e justificando o texto */}
         <div className="text-center">
-          <h2 className="text-900 mb-2">SISJUD</h2>
           <p className="text-600 mb-4" style={{ textAlign: "justify" }}>
-            Bem-vindo ao sistema <strong>Jurídico de Atendimento</strong>, onde você poderá encontrar o melhor advogado para sua causa.
+            Bem-vindo ao <strong>Sistema Jurídico de Atendimento</strong>, onde você poderá encontrar o melhor advogado para sua causa.
           </p>
         </div>
 

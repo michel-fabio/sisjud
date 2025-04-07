@@ -85,7 +85,7 @@ const CancelarAtendimento = () => {
             <SideBarCliente />
             <div style={{ flex: 1, padding: '40px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                 <div style={{ position: 'absolute', top: '10px', right: '20px' }}>
-                    <img src="./logo.png" alt="Ícone do Sistema" style={{ width: '40px', height: '40px' }} />
+                    <img src="./logo.png" alt="Ícone do Sistema" style={{ width: '70px', height: '70px' }} />
                 </div>
 
                 <div style={{

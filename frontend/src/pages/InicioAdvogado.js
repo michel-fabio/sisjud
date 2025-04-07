@@ -123,7 +123,7 @@ function InicioAdvogado() {
       <SideBarAdvogado />
 
       <div style={{ position: 'absolute', top: '10px', right: '20px', zIndex: 1 }}>
-        <img src="./logo.png" alt="Ícone do Sistema" style={{ width: '40px', height: '40px' }} />
+        <img src="./logo.png" alt="Ícone do Sistema" style={{ width: '70px', height: '70px' }} />
       </div>
 
       <div style={{ flex: 1, padding: '2rem' }}>

@@ -51,7 +51,7 @@ function AtendimentosRealizados() {
       <SideBarAdvogado />
       <div style={{ flex: 1, padding: '2rem' }}>
         <div style={{ position: 'absolute', top: '10px', right: '20px' }}>
-          <img src="/logo.png" alt="Ícone do Sistema" style={{ width: '40px', height: '40px' }} />
+          <img src="/logo.png" alt="Ícone do Sistema" style={{ width: '70px', height: '70px' }} />
         </div>
 
         <h2>Atendimentos Realizados</h2>

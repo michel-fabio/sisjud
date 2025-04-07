@@ -116,6 +116,10 @@ const SolicitarAtendimento = () => {
 
       <div style={{ flex: 1, display: 'flex', padding: '40px', alignItems: 'center', justifyContent: 'center' }}>
 
+        <div style={{ position: 'absolute', top: '10px', right: '20px' }}>
+            <img src="./logo.png" alt="Ícone do Sistema" style={{ width: '70px', height: '70px' }} />
+          </div>
+
         
         {/* Card do formulário */}
         <div style={{
