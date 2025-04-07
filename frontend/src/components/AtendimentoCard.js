@@ -8,7 +8,7 @@ const AtendimentoCard = ({ atendimento, onIniciar }) => {
       borderRadius: '8px',
       boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
       padding: '15px',
-      marginBottom: '15px',
+      marginBottom: '10px',
       borderLeft: '6px solid #00bf63'
     }}>
       <h3 style={{ backgroundColor: '#00bf63', color: 'white', padding: '8px', borderRadius: '4px' }}>
