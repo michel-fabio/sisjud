@@ -11,7 +11,7 @@ on:
 jobs:
   run-tests:
     name: Run Django Tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Checkout do código
@@ -20,7 +20,7 @@ jobs:
       - name: Configurar Python
         uses: actions/setup-python@v4
         with:
-          python-version: 3.10
+          python-version: '3.10'
 
       - name: Instalar dependências do backend
         working-directory: backend
