@@ -111,6 +111,7 @@ class AtendimentoViewSet(viewsets.ModelViewSet):
 
         dados = [
             {
+                'id': atendimento.id,
                 'data': atendimento.data_atendimento.strftime('%d/%m/%Y %H:%M'),
                 'numero': atendimento.numero_atendimento,
                 'area': atendimento.area_juridica.nome,
