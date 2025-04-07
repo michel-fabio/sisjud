@@ -74,6 +74,47 @@ class AtendimentoTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertGreaterEqual(len(response.data), 1)
 
+    def test_cancelar_atendimento_pendente(self):
+        atendimento = Atendimento.objects.create(
+            cliente=self.cliente,
+            area_juridica=self.area,
+            assunto=self.assunto,
+            data_atendimento=timezone.now() + timedelta(days=1),
+            valor_causa=0.00,
+            status='pendente',
+            numero_atendimento='25040001'
+        )
+        self.client.force_authenticate(user=self.cliente)
+        url = f'/api/atendimentos/atendimentos/{atendimento.id}/cancelar/'
+        data = {'motivo': 'Mudança de planos', 'observacoes': 'Outro advogado'}
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        atendimento.refresh_from_db()
+        self.assertEqual(atendimento.status, 'cancelado')
+        self.assertIn('Motivo: Mudança de planos', atendimento.anotacoes)
+
+    def test_cancelar_outro_usuario(self):
+        outro = Usuario.objects.create_user(
+            username='outro@email.com',
+            email='outro@email.com',
+            password='outro123',
+            first_name='Outro',
+            tipo='cliente'
+        )
+        atendimento = Atendimento.objects.create(
+            cliente=outro,  # aqui eu cadastei que o dono do atendimento é "outro" cliente
+            area_juridica=self.area,
+            assunto=self.assunto,
+            data_atendimento=timezone.now() + timedelta(days=1),
+            valor_causa=0.00,
+            status='pendente',
+            numero_atendimento='25040001'
+        )
+        self.client.force_authenticate(user=self.cliente)  # <--- usuário diferente
+        url = f'/api/atendimentos/atendimentos/{atendimento.id}/cancelar/'
+        response = self.client.post(url, {'motivo': 'Teste'})
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
     def test_finalizar_atendimento_por_advogado(self):
         atendimento = Atendimento.objects.create(
             cliente=self.cliente,
@@ -85,7 +126,7 @@ class AtendimentoTests(APITestCase):
             numero_atendimento='25040001'
         )
         self.client.force_authenticate(user=self.advogado_user)
-        url = reverse('atendimentos-finalizar', args=[atendimento.numero_atendimento])
+        url = f'/api/atendimentos/atendimentos/{atendimento.numero_atendimento}/finalizar/'
         data = {
             'status': 'finalizado_causa_ganha',
             'descricao': 'Processo concluído com sucesso.',
