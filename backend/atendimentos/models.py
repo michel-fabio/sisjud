@@ -22,8 +22,7 @@ class Atendimento(models.Model):
         ('pendente', 'Agendamento marcado, aguardando atendimento'),
         ('em_analise', 'Em Análise Inicial'),
         ('aguardando_documentos', 'Aguardando Documentos'),
-        ('rejeitado', 'Rejeitado pelo Escritório'),
-        
+         
         # Atendimento em curso
         ('em_andamento', 'Em Atendimento'),
         ('aguardando_retorno_cliente', 'Aguardando Retorno do Cliente'),
@@ -44,6 +43,7 @@ class Atendimento(models.Model):
         ('finalizado_acordo', 'Finalizado com Acordo'),
         ('encerrado_por_inatividade', 'Encerrado por Inatividade'),
         ('cancelado', 'Cancelado'),
+        ('rejeitado', 'Rejeitado pelo Escritório'),
     ]
 
     numero_atendimento = models.CharField(max_length=20, unique=True, blank=True, null=True)

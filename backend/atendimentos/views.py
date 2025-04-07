@@ -186,7 +186,16 @@ class AtendimentoViewSet(viewsets.ModelViewSet):
             data_atendimento__year=ano_atual
         ).count()
 
-        em_andamento = atendimentos.filter(status='em_andamento').count()
+        em_andamento = atendimentos.exclude(
+            status__in=[
+                'finalizado_causa_ganha',
+                'finalizado_sem_causa_ganha',
+                'finalizado_acordo',
+                'encerrado_por_inatividade',
+                'cancelado',
+                'rejeitado'
+            ]
+        ).exclude(numero_processo__isnull=True).exclude(numero_processo__exact='').count()
         causas_ganhas = finalizados.filter(status='finalizado_causa_ganha').count()
 
         honorarios = finalizados.aggregate(models.Sum('valor_causa'))['valor_causa__sum'] or 0
