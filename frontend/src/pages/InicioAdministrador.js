@@ -43,9 +43,7 @@ function InicioAdministrador() {
   useEffect(() => {
     const carregarDados = async () => {
       try {
-        const token = localStorage.getItem('token');
-        const response = await api.get('atendimentos/dashboard-admin/');
-
+        const response = await api.get('atendimentos/atendimentos/dashboard-admin/');
         setDados(response.data);
       } catch (err) {
         console.error('Erro ao buscar dados do dashboard:', err);

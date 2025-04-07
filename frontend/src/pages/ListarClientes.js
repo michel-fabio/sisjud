@@ -38,8 +38,7 @@ function ListarClientes() {
         <DataTable
           value={clientes}
           paginator
-          rows={5}
-          rowsPerPageOptions={[5, 10, 20]}
+          rows={10}
           filterDisplay="row"
           stripedRows
           emptyMessage="Nenhum cliente encontrado."

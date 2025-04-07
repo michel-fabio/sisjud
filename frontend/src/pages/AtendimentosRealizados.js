@@ -15,7 +15,7 @@ function AtendimentosRealizados() {
   useEffect(() => {
     const fetchAtendimentos = async () => {
       try {
-        const response = await api.get('/atendimentos/finalizados/');
+        const response = await api.get('atendimentos/atendimentos/finalizados/');
         setAtendimentos(response.data);
       } catch (error) {
         console.error('Erro ao buscar atendimentos finalizados:', error);
@@ -64,8 +64,7 @@ function AtendimentosRealizados() {
           <DataTable
             value={atendimentos}
             paginator
-            rows={5}
-            rowsPerPageOptions={[5, 10, 20]}
+            rows={20}
             stripedRows
             filterDisplay="row"
             emptyMessage="Nenhum atendimento encontrado."

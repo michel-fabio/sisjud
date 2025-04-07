@@ -53,12 +53,7 @@ function InicioAdvogado() {
   useEffect(() => {
     const fetchDados = async () => {
       try {
-        const token = localStorage.getItem('token');
-        const response = await api.get('atendimentos/finalizados/', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await api.get('atendimentos/atendimentos/finalizados/');
 
         const atendimentos = response.data;
 
