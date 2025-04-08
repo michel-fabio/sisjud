@@ -67,12 +67,12 @@ function LoginAdvogado() {
       />
       <Card className="p-4 shadow-2 border-round-lg w-3" style={{ backgroundColor: "white" }}>
         <div className="flex justify-content-center mb-3">
-          <img src="/logo.png" alt="Logo" width="200" />
+          <img src="/logo-advogado.png" alt="Logo" width="200" />
         </div>
 
         <div className="text-center">
-          <p className="text-600 mb-4" style={{ textAlign: "center" }}>
-            Este login é exclusivo para <strong>advogados e administradores</strong>.
+          <p className="text-600 mb-4" style={{ textAlign: "justify" }}>
+            Este tela de login é exclusiva para <strong>advogados e administradores</strong>.
           </p>
         </div>
 
