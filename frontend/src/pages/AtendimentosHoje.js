@@ -11,7 +11,7 @@ function AtendimentosHoje() {
   useEffect(() => {
     const fetchAtendimentos = async () => {
       try {
-        const response = await api.get('atendimentos/atendimentos/hoje-advogado/');
+        const response = await api.get('atendimentos/hoje-advogado/');
         setAtendimentos(response.data);
       } catch (error) {
         console.error("Erro ao buscar atendimentos de hoje:", error);

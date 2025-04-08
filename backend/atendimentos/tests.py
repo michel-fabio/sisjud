@@ -1,11 +1,10 @@
-from django.urls import reverse
 from rest_framework.test import APITestCase
 from rest_framework import status
+from django.utils import timezone
+from datetime import timedelta
 from usuarios.models import Usuario
 from advogados.models import Advogado
 from .models import Atendimento, AreaJuridica, Assunto, MotivoCancelamento
-from django.utils import timezone
-from datetime import timedelta
 
 class AtendimentoTests(APITestCase):
 
@@ -39,7 +38,7 @@ class AtendimentoTests(APITestCase):
             'assunto': self.assunto.id,
             'data_atendimento': (timezone.now() + timedelta(days=1)).isoformat()
         }
-        response = self.client.post(reverse('atendimentos-list'), data, format='json')
+        response = self.client.post('/api/atendimentos/', data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertTrue(Atendimento.objects.filter(cliente=self.cliente).exists())
         self.assertIsNotNone(response.data.get('numero'))
@@ -55,7 +54,7 @@ class AtendimentoTests(APITestCase):
             numero_atendimento='25040001'
         )
         self.client.force_authenticate(user=self.cliente)
-        response = self.client.get(reverse('atendimentos-list'))
+        response = self.client.get('/api/atendimentos/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertGreaterEqual(len(response.data), 1)
 
@@ -70,7 +69,7 @@ class AtendimentoTests(APITestCase):
             numero_atendimento='25040001'
         )
         self.client.force_authenticate(user=self.cliente)
-        response = self.client.get(reverse('atendimentos-pendentes'))
+        response = self.client.get('/api/atendimentos/pendentes/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertGreaterEqual(len(response.data), 1)
 
@@ -85,7 +84,7 @@ class AtendimentoTests(APITestCase):
             numero_atendimento='25040001'
         )
         self.client.force_authenticate(user=self.cliente)
-        url = f'/api/atendimentos/atendimentos/{atendimento.id}/cancelar/'
+        url = f'/api/atendimentos/{atendimento.id}/cancelar/'
         data = {'motivo': 'Mudança de planos', 'observacoes': 'Outro advogado'}
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -102,7 +101,7 @@ class AtendimentoTests(APITestCase):
             tipo='cliente'
         )
         atendimento = Atendimento.objects.create(
-            cliente=outro,  # aqui eu cadastei que o dono do atendimento é "outro" cliente
+            cliente=outro,
             area_juridica=self.area,
             assunto=self.assunto,
             data_atendimento=timezone.now() + timedelta(days=1),
@@ -110,8 +109,8 @@ class AtendimentoTests(APITestCase):
             status='pendente',
             numero_atendimento='25040001'
         )
-        self.client.force_authenticate(user=self.cliente)  # <--- usuário diferente
-        url = f'/api/atendimentos/atendimentos/{atendimento.id}/cancelar/'
+        self.client.force_authenticate(user=self.cliente)
+        url = f'/api/atendimentos/{atendimento.id}/cancelar/'
         response = self.client.post(url, {'motivo': 'Teste'})
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
@@ -126,7 +125,7 @@ class AtendimentoTests(APITestCase):
             numero_atendimento='25040001'
         )
         self.client.force_authenticate(user=self.advogado_user)
-        url = f'/api/atendimentos/atendimentos/{atendimento.numero_atendimento}/finalizar/'
+        url = f'/api/atendimentos/{atendimento.numero_atendimento}/finalizar/'
         data = {
             'status': 'finalizado_causa_ganha',
             'descricao': 'Processo concluído com sucesso.',
@@ -176,7 +175,7 @@ class AtendimentoOutrosEndpointsTests(APITestCase):
 
     def test_dashboard_admin(self):
         self.client.force_authenticate(user=self.admin)
-        response = self.client.get(reverse('atendimentos-dashboard-admin'))
+        response = self.client.get('/api/atendimentos/dashboard-admin/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn('total_mes', response.data)
         self.assertIn('clientes', response.data)
@@ -184,20 +183,28 @@ class AtendimentoOutrosEndpointsTests(APITestCase):
 
     def test_listar_areas_juridicas(self):
         self.client.force_authenticate(user=self.cliente)
-        response = self.client.get(reverse('areas-list'))
+        response = self.client.get('/api/atendimentos/areas/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertGreaterEqual(len(response.data), 2)
 
     def test_listar_assuntos_sem_filtro(self):
         self.client.force_authenticate(user=self.cliente)
-        response = self.client.get(reverse('assuntos-list'))
+        response = self.client.get('/api/atendimentos/assuntos/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertGreaterEqual(len(response.data), 2)
 
     def test_listar_assuntos_filtrando_por_area(self):
         self.client.force_authenticate(user=self.cliente)
-        url = reverse('assuntos-list') + f'?area={self.area1.id}'
+        url = f'/api/atendimentos/assuntos/?area={self.area1.id}'
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]['titulo'], 'Crimes')
+
+    def test_listar_motivos_cancelamento(self):
+        MotivoCancelamento.objects.create(descricao='Motivo A')
+        MotivoCancelamento.objects.create(descricao='Motivo B')
+        self.client.force_authenticate(user=self.cliente)
+        response = self.client.get('/api/atendimentos/motivos-cancelamento/')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertGreaterEqual(len(response.data), 2)

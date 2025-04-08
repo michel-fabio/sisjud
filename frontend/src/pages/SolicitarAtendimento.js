@@ -80,7 +80,7 @@ const SolicitarAtendimento = () => {
     }
   
     try {  
-      await api.post("atendimentos/atendimentos/", {
+      await api.post("atendimentos/", {
         area_juridica: areaSelecionada,
         assunto: assuntoSelecionado,
         data_atendimento: data.toISOString(),

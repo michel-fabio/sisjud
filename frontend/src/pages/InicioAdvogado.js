@@ -53,7 +53,7 @@ function InicioAdvogado() {
   useEffect(() => {
     const fetchDados = async () => {
       try {
-        const response = await api.get('atendimentos/atendimentos/finalizados/');
+        const response = await api.get('atendimentos/finalizados/');
 
         const atendimentos = response.data;
 

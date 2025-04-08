@@ -50,7 +50,7 @@ const InicioCliente = () => {
   useEffect(() => {
     const fetchAtendimentos = async () => {
       try {
-        const response = await api.get("atendimentos/atendimentos/");
+        const response = await api.get("atendimentos/");
 
         setAtendimentos(response.data);
       } catch (error) {

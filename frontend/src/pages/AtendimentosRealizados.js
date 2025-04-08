@@ -15,7 +15,7 @@ function AtendimentosRealizados() {
   useEffect(() => {
     const fetchAtendimentos = async () => {
       try {
-        const response = await api.get('atendimentos/atendimentos/finalizados/');
+        const response = await api.get('atendimentos/finalizados/');
         setAtendimentos(response.data);
       } catch (error) {
         console.error('Erro ao buscar atendimentos finalizados:', error);

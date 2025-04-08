@@ -18,7 +18,7 @@ const CancelarAtendimento = () => {
     useEffect(() => {
         const fetchAtendimentos = async () => {
             try {
-                const response = await api.get('atendimentos/atendimentos/pendentes/');
+                const response = await api.get('atendimentos/pendentes/');
                 setAtendimentos(response.data);
             } catch (err) {
                 console.error("Erro ao carregar atendimentos pendentes", err);
@@ -55,7 +55,7 @@ const CancelarAtendimento = () => {
 
         try {
 
-            await api.post(`atendimentos/atendimentos/${atendimentoSelecionado}/cancelar/`, {
+            await api.post(`atendimentos/${atendimentoSelecionado}/cancelar/`, {
                 motivo,
                 observacoes
             });

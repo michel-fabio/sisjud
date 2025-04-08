@@ -14,7 +14,7 @@ function Atendimento() {
   useEffect(() => {
     const fetchStatusOptions = async () => {
       try {
-        const response = await api.get('atendimentos/atendimentos/status/');
+        const response = await api.get('atendimentos/status/');
         const formatadas = response.data.map(op => ({
           label: op.rotulo,
           value: op.valor
@@ -30,7 +30,7 @@ function Atendimento() {
 
   const finalizarAtendimento = async (numero, dados) => {
     try {
-      await api.patch(`atendimentos/atendimentos/${numero}/finalizar/`, dados);
+      await api.patch(`atendimentos/${numero}/finalizar/`, dados);
 
       await Swal.fire({
         icon: 'success',

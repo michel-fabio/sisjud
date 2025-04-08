@@ -5,14 +5,16 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from .models import Atendimento, AreaJuridica, Assunto, MotivoCancelamento
 from advogados.models import Advogado
-from .serializers import AtendimentoSerializer, AreaJuridicaSerializer, AssuntoSerializer, AtendimentoPendenteSerializer, MotivoCancelamentoSerializer
+from .serializers import (
+    AtendimentoSerializer,
+    AreaJuridicaSerializer,
+    AssuntoSerializer,
+    AtendimentoPendenteSerializer,
+    MotivoCancelamentoSerializer
+)
 from rest_framework.permissions import IsAuthenticated
-from rest_framework import status as drf_status
 from datetime import datetime
 from django.utils.timezone import now
-from rest_framework.permissions import IsAuthenticated
-
-
 
 
 class AtendimentoViewSet(viewsets.ModelViewSet):
@@ -24,35 +26,22 @@ class AtendimentoViewSet(viewsets.ModelViewSet):
         return Atendimento.objects.filter(cliente=self.request.user)\
             .select_related('area_juridica', 'assunto', 'advogado')\
             .order_by('-data_atendimento')
-    
-    @action(detail=False, methods=['get'], url_path='status')
-    def listar_status(self, request):
-        status_list = [
-            {'valor': key, 'rotulo': label}
-            for key, label in Atendimento.STATUS_CHOICES
-        ]
-        return Response(status_list)
-    
+
     def perform_create(self, serializer):
         user = self.request.user
         data_atendimento = self.request.data.get('data_atendimento')
-        
+
         if not data_atendimento:
             return Response({'erro': 'Data do atendimento é obrigatória.'}, status=400)
 
-        # Converte string ISO para datetime
         data_obj = datetime.fromisoformat(data_atendimento)
+        ano = str(data_obj.year)[-2:]
+        data_str = data_obj.strftime('%d%m')
+        prefixo = f"{ano}{data_str}"
 
-        ano = str(data_obj.year)[-2:]  # últimos dois dígitos do ano
-        data_str = data_obj.strftime('%d%m')  # formato: 2403
-
-        prefixo = f"{ano}{data_str}"  # Ex: 250324
-
-        # Busca quantos atendimentos já existem com esse prefixo
         existentes = Atendimento.objects.filter(numero_atendimento__startswith=prefixo).count()
-        indice = f"{existentes + 1:04d}"  # sempre 4 dígitos
-
-        numero_gerado = f"{prefixo}{indice}"  # Ex: 2503240001
+        indice = f"{existentes + 1:04d}"
+        numero_gerado = f"{prefixo}{indice}"
 
         serializer.save(
             cliente=user,
@@ -60,7 +49,15 @@ class AtendimentoViewSet(viewsets.ModelViewSet):
             valor_causa=0.00,
             numero_atendimento=numero_gerado
         )
-    
+
+    @action(detail=False, methods=['get'], url_path='status')
+    def listar_status(self, request):
+        status_list = [
+            {'valor': key, 'rotulo': label}
+            for key, label in Atendimento.STATUS_CHOICES
+        ]
+        return Response(status_list)
+
     @action(detail=False, methods=['get'], url_path='pendentes')
     def pendentes(self, request):
         pendentes = Atendimento.objects.filter(
@@ -70,7 +67,7 @@ class AtendimentoViewSet(viewsets.ModelViewSet):
 
         serializer = AtendimentoPendenteSerializer(pendentes, many=True)
         return Response(serializer.data)
-    
+
     @action(detail=True, methods=['post'], url_path='cancelar')
     def cancelar_atendimento(self, request, pk=None):
         try:
@@ -89,11 +86,11 @@ class AtendimentoViewSet(viewsets.ModelViewSet):
             atendimento.anotacoes = f"Cancelado pelo cliente. Motivo: {motivo}\nObservações: {observacoes}"
             atendimento.save()
 
-            return Response({'mensagem': 'Atendimento cancelado com sucesso.'}, status=drf_status.HTTP_200_OK)
+            return Response({'mensagem': 'Atendimento cancelado com sucesso.'}, status=status.HTTP_200_OK)
 
         except Atendimento.DoesNotExist:
             return Response({'erro': 'Atendimento não encontrado.'}, status=404)
-    
+
     @action(detail=False, methods=['get'], url_path='hoje-advogado')
     def atendimentos_hoje_advogado(self, request):
         if not hasattr(request.user, 'advogado'):
@@ -126,7 +123,7 @@ class AtendimentoViewSet(viewsets.ModelViewSet):
             for atendimento in atendimentos
         ]
         return Response(dados)
-    
+
     @action(detail=True, methods=['patch'], url_path='finalizar')
     def finalizar(self, request, pk=None):
         try:
@@ -134,7 +131,6 @@ class AtendimentoViewSet(viewsets.ModelViewSet):
 
             atendimento.status = request.data.get('status')
             atendimento.advogado = request.user.advogado
-
             atendimento.numero_processo = request.data.get('numero_processo', '')
             atendimento.valor_causa = request.data.get('valor_causa', None)
             atendimento.anotacoes = request.data.get('descricao', '')
@@ -145,7 +141,7 @@ class AtendimentoViewSet(viewsets.ModelViewSet):
             return Response({'erro': 'Atendimento não encontrado.'}, status=404)
         except Exception as e:
             return Response({'erro': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-        
+
     @action(detail=False, methods=['get'], url_path='finalizados')
     def atendimentos_finalizados(self, request):
         if not hasattr(request.user, 'advogado'):
@@ -171,7 +167,7 @@ class AtendimentoViewSet(viewsets.ModelViewSet):
             for atendimento in atendimentos
         ]
         return Response(dados)
-    
+
     @action(detail=False, methods=['get'], url_path='dashboard-admin')
     def dashboard_admin(self, request):
         hoje = now()
@@ -196,8 +192,8 @@ class AtendimentoViewSet(viewsets.ModelViewSet):
                 'rejeitado'
             ]
         ).exclude(numero_processo__isnull=True).exclude(numero_processo__exact='').count()
-        causas_ganhas = finalizados.filter(status='finalizado_causa_ganha').count()
 
+        causas_ganhas = finalizados.filter(status='finalizado_causa_ganha').count()
         honorarios = finalizados.aggregate(models.Sum('valor_causa'))['valor_causa__sum'] or 0
 
         Usuario = get_user_model()
@@ -213,26 +209,23 @@ class AtendimentoViewSet(viewsets.ModelViewSet):
             'advogados': advogados
         })
 
+    @action(detail=False, methods=['get'], url_path='areas')
+    def listar_areas(self, request):
+        queryset = AreaJuridica.objects.all()
+        serializer = AreaJuridicaSerializer(queryset, many=True)
+        return Response(serializer.data)
 
-
-class AreaJuridicaViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = AreaJuridica.objects.all()
-    serializer_class = AreaJuridicaSerializer
-    permission_classes = [IsAuthenticated]
-
-class AssuntoViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Assunto.objects.all()
-    serializer_class = AssuntoSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        area_id = self.request.query_params.get('area')
+    @action(detail=False, methods=['get'], url_path='assuntos')
+    def listar_assuntos(self, request):
+        area_id = request.query_params.get('area')
+        queryset = Assunto.objects.all()
         if area_id:
             queryset = queryset.filter(area_id=area_id)
-        return queryset
-    
-class MotivoCancelamentoViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = MotivoCancelamento.objects.all()
-    serializer_class = MotivoCancelamentoSerializer
-    permission_classes = [IsAuthenticated]
+        serializer = AssuntoSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+    @action(detail=False, methods=['get'], url_path='motivos-cancelamento')
+    def listar_motivos_cancelamento(self, request):
+        queryset = MotivoCancelamento.objects.all()
+        serializer = MotivoCancelamentoSerializer(queryset, many=True)
+        return Response(serializer.data)
