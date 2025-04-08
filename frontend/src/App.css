@@ -129,3 +129,7 @@
 .custom-menu-advogado .p-menuitem:hover .p-menuitem-icon {
   color: var(--menu-hover-color) !important;
 }
+
+.swal2-container {
+  z-index: 9999 !important;
+}
