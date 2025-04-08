@@ -27,8 +27,13 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+          pip install python-dotenv
 
-      - name: Rodar testes do Django
+      - name: Copiar .env_tests como .env
+        working-directory: backend
+        run: cp .env_tests .env
+
+      - name: Rodar testes com dotenv
         working-directory: backend
         run: |
-          python manage.py test
+          dotenv run -- python manage.py test
