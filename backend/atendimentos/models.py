@@ -1,5 +1,5 @@
 from django.db import models
-
+from encrypted_model_fields.fields import EncryptedTextField
 from usuarios.models import Usuario
 from advogados.models import Advogado
 
@@ -55,7 +55,7 @@ class Atendimento(models.Model):
     valor_causa = models.DecimalField(max_digits=10, decimal_places=2)
     numero_processo = models.CharField(max_length=25, blank=True, null=True)
     status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='pendente')
-    anotacoes = models.TextField(blank=True, null=True)
+    anotacoes = EncryptedTextField(blank=True, null=True)
 
     def __str__(self):
         return f"Atendimento {self.id} - {self.area_juridica}"

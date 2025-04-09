@@ -1,4 +1,6 @@
 import os
+import base64
+from cryptography.fernet import Fernet
 from pathlib import Path
 from datetime import timedelta
 from dotenv import load_dotenv
@@ -157,3 +159,5 @@ SWAGGER_SETTINGS = {
         }
     }
 }
+
+FIELD_ENCRYPTION_KEY = os.getenv("FIELD_ENCRYPTION_KEY")
