@@ -22,6 +22,7 @@ urlpatterns = [
     path('api/usuarios/', include('usuarios.urls')),
     path('api/atendimentos/', include('atendimentos.urls')),
     path('api/advogados/', include('advogados.urls')),
+    path("core/", include("core.urls")),
 
     # JWT tokens
     path('api/token/', CustomLoginView.as_view(), name='token_obtain_pair'),

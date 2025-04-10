@@ -42,11 +42,6 @@ function AdvogadosAfiliados() {
     }
   };
 
-  const gerarSenha = () => {
-    const letras = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    return Array.from({ length: 10 }, () => letras[Math.floor(Math.random() * letras.length)]).join("");
-  };
-
   const limparFormulario = () => {
     setNome('');
     setEmail('');
@@ -79,13 +74,10 @@ function AdvogadosAfiliados() {
       return;
     }
 
-    const senha = gerarSenha();
-
     try {
       await api.post("advogados/", {
         nome,
         email,
-        senha,
         numero_oab: oab,
         areas_atuacao: areas.join(", "),
       });
